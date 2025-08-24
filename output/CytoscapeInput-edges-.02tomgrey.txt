@@ -1,0 +1,311 @@
+fromNode	toNode	weight	direction	fromAltName	toAltName
+D-Galactose	Trehalose	0.143197792827452	undirected	D-Galactose	Trehalose
+D-Galactose	L-Norleucine	0.0275593312862641	undirected	D-Galactose	L-Norleucine
+D-Galactose	1,3,5-Trihydroxybenzene	0.0359252804842854	undirected	D-Galactose	1,3,5-Trihydroxybenzene
+D-Galactose	Alanylvaline	0.0266590658087125	undirected	D-Galactose	Alanylvaline
+3b,7a,12a-Trihydroxy-5b-cholanoic acid	Deoxycholic acid	0.0472765030303365	undirected	3b,7a,12a-Trihydroxy-5b-cholanoic acid	Deoxycholic acid
+3b,7a,12a-Trihydroxy-5b-cholanoic acid	Bilirubin	0.0876810704095436	undirected	3b,7a,12a-Trihydroxy-5b-cholanoic acid	Bilirubin
+3b,7a,12a-Trihydroxy-5b-cholanoic acid	Glutaric acid	0.0368847496408665	undirected	3b,7a,12a-Trihydroxy-5b-cholanoic acid	Glutaric acid
+3b,7a,12a-Trihydroxy-5b-cholanoic acid	1,3,5-Trihydroxybenzene	0.0686101495780962	undirected	3b,7a,12a-Trihydroxy-5b-cholanoic acid	1,3,5-Trihydroxybenzene
+3b,7a,12a-Trihydroxy-5b-cholanoic acid	beta-D-Glucosamine	0.0619785791587065	undirected	3b,7a,12a-Trihydroxy-5b-cholanoic acid	beta-D-Glucosamine
+3b,7a,12a-Trihydroxy-5b-cholanoic acid	Oleoylethanolamide	0.0338510118527256	undirected	3b,7a,12a-Trihydroxy-5b-cholanoic acid	Oleoylethanolamide
+3b,7a,12a-Trihydroxy-5b-cholanoic acid	Corticosterone	0.421802630547628	undirected	3b,7a,12a-Trihydroxy-5b-cholanoic acid	Corticosterone
+Deoxycholic acid	p-Cresol	0.531468643552117	undirected	Deoxycholic acid	p-Cresol
+Deoxycholic acid	Ursocholic acid	0.522632961577559	undirected	Deoxycholic acid	Ursocholic acid
+Deoxycholic acid	Bilirubin	0.0489182310180818	undirected	Deoxycholic acid	Bilirubin
+Deoxycholic acid	L-Tyrosine	0.0234952142615917	undirected	Deoxycholic acid	L-Tyrosine
+Deoxycholic acid	12-Ketodeoxycholic acid	0.0290053228791741	undirected	Deoxycholic acid	12-Ketodeoxycholic acid
+Deoxycholic acid	Allocholic acid	0.0313516703727059	undirected	Deoxycholic acid	Allocholic acid
+Deoxycholic acid	2-Furoic acid	-0.0668567222795218	undirected	Deoxycholic acid	2-Furoic acid
+Deoxycholic acid	Piperine	0.473417779083674	undirected	Deoxycholic acid	Piperine
+Deoxycholic acid	(S)-Laudanosine	0.348584132654532	undirected	Deoxycholic acid	(S)-Laudanosine
+Deoxycholic acid	Octanol	0.527480216926128	undirected	Deoxycholic acid	Octanol
+Deoxycholic acid	N-Acetylputrescine	0.524801546076262	undirected	Deoxycholic acid	N-Acetylputrescine
+Deoxycholic acid	N-Acetyl-Leu	0.506158289335633	undirected	Deoxycholic acid	N-Acetyl-Leu
+Deoxycholic acid	Stanozolol	-0.0395214107590471	undirected	Deoxycholic acid	Stanozolol
+Deoxycholic acid	Cinchonidine	0.490188098366719	undirected	Deoxycholic acid	Cinchonidine
+Deoxycholic acid	Oleoylethanolamide	0.169625430095715	undirected	Deoxycholic acid	Oleoylethanolamide
+Deoxycholic acid	Corticosterone	0.0542133905138918	undirected	Deoxycholic acid	Corticosterone
+Deoxycholic acid	Prolylhydroxyproline	0.0774410471983703	undirected	Deoxycholic acid	Prolylhydroxyproline
+Geranyl-PP	Linoelaidic acid	0.0734069033589817	undirected	Geranyl-PP	Linoelaidic acid
+Geranyl-PP	Sphingosine	0.0496511494412326	undirected	Geranyl-PP	Sphingosine
+Geranyl-PP	12-Ketodeoxycholic acid	0.0249184927141838	undirected	Geranyl-PP	12-Ketodeoxycholic acid
+Geranyl-PP	Allocholic acid	0.021453706062816	undirected	Geranyl-PP	Allocholic acid
+Geranyl-PP	Elaidic acid	0.100697146689154	undirected	Geranyl-PP	Elaidic acid
+Geranyl-PP	N6,N6,N6-Trimethyl-L-lysine	-0.0349671284659191	undirected	Geranyl-PP	N6,N6,N6-Trimethyl-L-lysine
+Geranyl-PP	Enterolactone	0.0632531613968041	undirected	Geranyl-PP	Enterolactone
+Geranyl-PP	beta-Tocopherol	0.0586624704762206	undirected	Geranyl-PP	beta-Tocopherol
+Geranyl-PP	Stearidonic acid	0.129621921608017	undirected	Geranyl-PP	Stearidonic acid
+Geranyl-PP	Hydrocinchonine	0.0769105050350166	undirected	Geranyl-PP	Hydrocinchonine
+Geranyl-PP	Cer(d18:1/16:0)	0.0508043574050133	undirected	Geranyl-PP	Cer(d18:1/16:0)
+Geranyl-PP	Cer(d18:0/18:0)	0.0255571134501019	undirected	Geranyl-PP	Cer(d18:0/18:0)
+Geranyl-PP	Prolylhydroxyproline	-0.037553220600728	undirected	Geranyl-PP	Prolylhydroxyproline
+Geranyl-PP	Leucyl-Glycine	-0.0289702987215503	undirected	Geranyl-PP	Leucyl-Glycine
+p-Cresol	Colubrinic acid	0.0759035829733903	undirected	p-Cresol	Colubrinic acid
+p-Cresol	Ursocholic acid	0.831201040679637	undirected	p-Cresol	Ursocholic acid
+p-Cresol	Bilirubin	0.0264830800273957	undirected	p-Cresol	Bilirubin
+p-Cresol	Indoleacetic acid	-0.0428642166436516	undirected	p-Cresol	Indoleacetic acid
+p-Cresol	2-Furoic acid	-0.296663143115477	undirected	p-Cresol	2-Furoic acid
+p-Cresol	Acetylcholine	0.0228449038498264	undirected	p-Cresol	Acetylcholine
+p-Cresol	Mesalazine	-0.0208494387261848	undirected	p-Cresol	Mesalazine
+p-Cresol	Piperine	0.839287699992853	undirected	p-Cresol	Piperine
+p-Cresol	(S)-Laudanosine	0.76348977028864	undirected	p-Cresol	(S)-Laudanosine
+p-Cresol	Octanol	0.834024914860729	undirected	p-Cresol	Octanol
+p-Cresol	N-Acetylputrescine	0.829682940128599	undirected	p-Cresol	N-Acetylputrescine
+p-Cresol	N-Acetyl-Leu	0.843196896962812	undirected	p-Cresol	N-Acetyl-Leu
+p-Cresol	Stanozolol	-0.0678767113001322	undirected	p-Cresol	Stanozolol
+p-Cresol	Cinchonidine	0.83141873657265	undirected	p-Cresol	Cinchonidine
+p-Cresol	Oleoylethanolamide	0.523068161988306	undirected	p-Cresol	Oleoylethanolamide
+p-Cresol	Corticosterone	0.0224146330169652	undirected	p-Cresol	Corticosterone
+p-Cresol	Prolylhydroxyproline	0.339988196319874	undirected	p-Cresol	Prolylhydroxyproline
+1,11-Undecanedicarboxylic acid	Colubrinic acid	0.0258383238941309	undirected	1,11-Undecanedicarboxylic acid	Colubrinic acid
+1,11-Undecanedicarboxylic acid	Glutaric acid	0.126477625714307	undirected	1,11-Undecanedicarboxylic acid	Glutaric acid
+1,11-Undecanedicarboxylic acid	Behenic acid	0.0609031063413488	undirected	1,11-Undecanedicarboxylic acid	Behenic acid
+1,11-Undecanedicarboxylic acid	1,3,5-Trihydroxybenzene	0.0200095675240336	undirected	1,11-Undecanedicarboxylic acid	1,3,5-Trihydroxybenzene
+1,11-Undecanedicarboxylic acid	beta-D-Glucosamine	0.0679672896935601	undirected	1,11-Undecanedicarboxylic acid	beta-D-Glucosamine
+Linoelaidic acid	Sphingosine	0.0359523352753966	undirected	Linoelaidic acid	Sphingosine
+Linoelaidic acid	Elaidic acid	0.13243167608688	undirected	Linoelaidic acid	Elaidic acid
+Linoelaidic acid	Androstanedione	0.0344048790100384	undirected	Linoelaidic acid	Androstanedione
+Linoelaidic acid	Enterolactone	0.0490506662829167	undirected	Linoelaidic acid	Enterolactone
+Linoelaidic acid	beta-Tocopherol	0.108187807307821	undirected	Linoelaidic acid	beta-Tocopherol
+Linoelaidic acid	Stearidonic acid	0.118083817151773	undirected	Linoelaidic acid	Stearidonic acid
+Linoelaidic acid	Hydrocinchonine	0.160964975445553	undirected	Linoelaidic acid	Hydrocinchonine
+Linoelaidic acid	Cer(d18:1/16:0)	0.199294232762666	undirected	Linoelaidic acid	Cer(d18:1/16:0)
+Linoelaidic acid	Cer(d18:0/18:0)	0.0536790710049395	undirected	Linoelaidic acid	Cer(d18:0/18:0)
+Linoelaidic acid	Stearic acid	0.0674387699741053	undirected	Linoelaidic acid	Stearic acid
+1-Naphthol	Pipecolic acid	0.478135599665037	undirected	1-Naphthol	Pipecolic acid
+1-Naphthol	L-Tyrosine	0.221916591998501	undirected	1-Naphthol	L-Tyrosine
+1-Naphthol	Pyroglutamic acid	0.332253123861765	undirected	1-Naphthol	Pyroglutamic acid
+1-Naphthol	Behenic acid	-0.024545221253585	undirected	1-Naphthol	Behenic acid
+5,7,3'-Trihydroxy-4'-methoxyflavanone	Indoleacetic acid	-0.0804239270227048	undirected	5,7,3'-Trihydroxy-4'-methoxyflavanone	Indoleacetic acid
+5,7,3'-Trihydroxy-4'-methoxyflavanone	2-Furoic acid	-0.120557192207289	undirected	5,7,3'-Trihydroxy-4'-methoxyflavanone	2-Furoic acid
+5,7,3'-Trihydroxy-4'-methoxyflavanone	L-Norleucine	0.255681893688625	undirected	5,7,3'-Trihydroxy-4'-methoxyflavanone	L-Norleucine
+5,7,3'-Trihydroxy-4'-methoxyflavanone	N-Acetylhistamine	0.281303992705924	undirected	5,7,3'-Trihydroxy-4'-methoxyflavanone	N-Acetylhistamine
+5,7,3'-Trihydroxy-4'-methoxyflavanone	Alanylisoleucine	0.0408692921418092	undirected	5,7,3'-Trihydroxy-4'-methoxyflavanone	Alanylisoleucine
+5,7,3'-Trihydroxy-4'-methoxyflavanone	Alanylvaline	0.130029212672255	undirected	5,7,3'-Trihydroxy-4'-methoxyflavanone	Alanylvaline
+5,7,3'-Trihydroxy-4'-methoxyflavanone	Prolylhydroxyproline	0.0871438257477204	undirected	5,7,3'-Trihydroxy-4'-methoxyflavanone	Prolylhydroxyproline
+Propylparaben	Bilirubin	0.0276261797505776	undirected	Propylparaben	Bilirubin
+Propylparaben	beta-Tocopherol	0.0722719203273368	undirected	Propylparaben	beta-Tocopherol
+Propylparaben	Hydrocinchonine	0.0235359651123538	undirected	Propylparaben	Hydrocinchonine
+Propylparaben	Cer(d18:1/16:0)	0.0298300515788352	undirected	Propylparaben	Cer(d18:1/16:0)
+Propylparaben	Cer(d18:0/18:0)	0.0454814048782621	undirected	Propylparaben	Cer(d18:0/18:0)
+Colubrinic acid	Ursocholic acid	0.0771256955303782	undirected	Colubrinic acid	Ursocholic acid
+Colubrinic acid	Sphingosine	0.0503513287326052	undirected	Colubrinic acid	Sphingosine
+Colubrinic acid	7-Ketodeoxycholic acid	0.192071104036937	undirected	Colubrinic acid	7-Ketodeoxycholic acid
+Colubrinic acid	Enterolactone	0.0467225895082246	undirected	Colubrinic acid	Enterolactone
+Colubrinic acid	Piperine	0.0660086568164389	undirected	Colubrinic acid	Piperine
+Colubrinic acid	(S)-Laudanosine	0.0496590253024783	undirected	Colubrinic acid	(S)-Laudanosine
+Colubrinic acid	Octanol	0.0766206746211483	undirected	Colubrinic acid	Octanol
+Colubrinic acid	N-Acetylputrescine	0.0767420396684067	undirected	Colubrinic acid	N-Acetylputrescine
+Colubrinic acid	N-Acetyl-Leu	0.072230408266303	undirected	Colubrinic acid	N-Acetyl-Leu
+Colubrinic acid	Cinchonidine	0.0739388945278076	undirected	Colubrinic acid	Cinchonidine
+Colubrinic acid	Prolylhydroxyproline	0.0355168343731134	undirected	Colubrinic acid	Prolylhydroxyproline
+Ursocholic acid	Bilirubin	0.0254628940708611	undirected	Ursocholic acid	Bilirubin
+Ursocholic acid	Indoleacetic acid	-0.0483543538655826	undirected	Ursocholic acid	Indoleacetic acid
+Ursocholic acid	2-Furoic acid	-0.302016129336763	undirected	Ursocholic acid	2-Furoic acid
+Ursocholic acid	Acetylcholine	0.0240728176587677	undirected	Ursocholic acid	Acetylcholine
+Ursocholic acid	Mesalazine	-0.021495654938069	undirected	Ursocholic acid	Mesalazine
+Ursocholic acid	Piperine	0.832272677892634	undirected	Ursocholic acid	Piperine
+Ursocholic acid	(S)-Laudanosine	0.755308845448078	undirected	Ursocholic acid	(S)-Laudanosine
+Ursocholic acid	Octanol	0.828018041770312	undirected	Ursocholic acid	Octanol
+Ursocholic acid	N-Acetylputrescine	0.823464813500636	undirected	Ursocholic acid	N-Acetylputrescine
+Ursocholic acid	N-Acetyl-Leu	0.836707871181841	undirected	Ursocholic acid	N-Acetyl-Leu
+Ursocholic acid	Stanozolol	-0.0666734492778915	undirected	Ursocholic acid	Stanozolol
+Ursocholic acid	Cinchonidine	0.824989675210529	undirected	Ursocholic acid	Cinchonidine
+Ursocholic acid	Oleoylethanolamide	0.517106367587442	undirected	Ursocholic acid	Oleoylethanolamide
+Ursocholic acid	Corticosterone	0.0214260872274558	undirected	Ursocholic acid	Corticosterone
+Ursocholic acid	Prolylhydroxyproline	0.346468885650058	undirected	Ursocholic acid	Prolylhydroxyproline
+Bilirubin	Glutamic acid	0.0501229665597666	undirected	Bilirubin	Glutamic acid
+Bilirubin	Citrulline	0.112500503639986	undirected	Bilirubin	Citrulline
+Bilirubin	Alanylisoleucine	0.0921738578126067	undirected	Bilirubin	Alanylisoleucine
+Bilirubin	Piperine	0.0230942850387297	undirected	Bilirubin	Piperine
+Bilirubin	(S)-Laudanosine	0.025852269627359	undirected	Bilirubin	(S)-Laudanosine
+Bilirubin	Octanol	0.026243080814699	undirected	Bilirubin	Octanol
+Bilirubin	N-Acetylputrescine	0.0263247629171492	undirected	Bilirubin	N-Acetylputrescine
+Bilirubin	N-Acetyl-Leu	0.0244305850617145	undirected	Bilirubin	N-Acetyl-Leu
+Bilirubin	Cinchonidine	0.0243325740044782	undirected	Bilirubin	Cinchonidine
+Bilirubin	Oleoylethanolamide	0.0282195819058587	undirected	Bilirubin	Oleoylethanolamide
+Bilirubin	Corticosterone	0.1299081333503	undirected	Bilirubin	Corticosterone
+Bilirubin	L-Cystine	0.110904016730261	undirected	Bilirubin	L-Cystine
+Pipecolic acid	L-Tyrosine	0.263090949322048	undirected	Pipecolic acid	L-Tyrosine
+Pipecolic acid	Pyroglutamic acid	0.309654633028863	undirected	Pipecolic acid	Pyroglutamic acid
+Glutamic acid	Sphingosine	-0.0352158786601353	undirected	Glutamic acid	Sphingosine
+Glutamic acid	Citrulline	0.503190396857113	undirected	Glutamic acid	Citrulline
+Glutamic acid	L-Norleucine	0.0341201446746186	undirected	Glutamic acid	L-Norleucine
+Glutamic acid	Acetone	0.0799644825085894	undirected	Glutamic acid	Acetone
+Glutamic acid	Enterolactone	-0.0345140960806011	undirected	Glutamic acid	Enterolactone
+Glutamic acid	Alanylisoleucine	0.341922338987811	undirected	Glutamic acid	Alanylisoleucine
+Glutamic acid	Alanylvaline	0.030476742199657	undirected	Glutamic acid	Alanylvaline
+Glutamic acid	L-Cystine	0.3884780660963	undirected	Glutamic acid	L-Cystine
+L-Tyrosine	Pyroglutamic acid	0.0988532072967602	undirected	L-Tyrosine	Pyroglutamic acid
+L-Tyrosine	Glutaric acid	0.0224597667697609	undirected	L-Tyrosine	Glutaric acid
+L-Tyrosine	Mesalazine	0.0282861750306517	undirected	L-Tyrosine	Mesalazine
+Indoleacetic acid	Elaidic acid	0.0235186692810683	undirected	Indoleacetic acid	Elaidic acid
+Indoleacetic acid	2-Furoic acid	0.074163578148714	undirected	Indoleacetic acid	2-Furoic acid
+Indoleacetic acid	Glutaric acid	-0.0316919987195441	undirected	Indoleacetic acid	Glutaric acid
+Indoleacetic acid	Acetylcholine	-0.0594187175581286	undirected	Indoleacetic acid	Acetylcholine
+Indoleacetic acid	L-Norleucine	-0.0525693979238636	undirected	Indoleacetic acid	L-Norleucine
+Indoleacetic acid	beta-Tocopherol	0.067633542177756	undirected	Indoleacetic acid	beta-Tocopherol
+Indoleacetic acid	Stearidonic acid	0.0221226676011287	undirected	Indoleacetic acid	Stearidonic acid
+Indoleacetic acid	N-Acetylhistamine	-0.0635051548211601	undirected	Indoleacetic acid	N-Acetylhistamine
+Indoleacetic acid	Alanylvaline	-0.0329325151155629	undirected	Indoleacetic acid	Alanylvaline
+Indoleacetic acid	Piperine	-0.0365535793559546	undirected	Indoleacetic acid	Piperine
+Indoleacetic acid	(S)-Laudanosine	-0.0231367378824039	undirected	Indoleacetic acid	(S)-Laudanosine
+Indoleacetic acid	Hydrocinchonine	0.0320308970687562	undirected	Indoleacetic acid	Hydrocinchonine
+Indoleacetic acid	Octanol	-0.0467281337398969	undirected	Indoleacetic acid	Octanol
+Indoleacetic acid	N-Acetylputrescine	-0.0472699013043235	undirected	Indoleacetic acid	N-Acetylputrescine
+Indoleacetic acid	N-Acetyl-Leu	-0.0380677541657	undirected	Indoleacetic acid	N-Acetyl-Leu
+Indoleacetic acid	Cinchonidine	-0.0418763729744585	undirected	Indoleacetic acid	Cinchonidine
+Indoleacetic acid	Cer(d18:1/16:0)	0.0237090889880173	undirected	Indoleacetic acid	Cer(d18:1/16:0)
+Indoleacetic acid	Prolylhydroxyproline	-0.120857580781492	undirected	Indoleacetic acid	Prolylhydroxyproline
+Sphingosine	7-Ketodeoxycholic acid	0.13463465161377	undirected	Sphingosine	7-Ketodeoxycholic acid
+Sphingosine	Elaidic acid	0.0929735342996587	undirected	Sphingosine	Elaidic acid
+Sphingosine	Androstanedione	0.060334764548336	undirected	Sphingosine	Androstanedione
+Sphingosine	Citrulline	-0.0231056896913907	undirected	Sphingosine	Citrulline
+Sphingosine	Trehalose	0.0206568239662328	undirected	Sphingosine	Trehalose
+Sphingosine	Acetone	-0.0383163815332398	undirected	Sphingosine	Acetone
+Sphingosine	Enterolactone	0.615416430263801	undirected	Sphingosine	Enterolactone
+Sphingosine	Stearidonic acid	0.092878473520984	undirected	Sphingosine	Stearidonic acid
+Sphingosine	Mesalazine	-0.0225852550802317	undirected	Sphingosine	Mesalazine
+12-Ketodeoxycholic acid	Allocholic acid	0.652005484383515	undirected	12-Ketodeoxycholic acid	Allocholic acid
+12-Ketodeoxycholic acid	N6,N6,N6-Trimethyl-L-lysine	-0.0243127972538752	undirected	12-Ketodeoxycholic acid	N6,N6,N6-Trimethyl-L-lysine
+7-Ketodeoxycholic acid	Acetylcholine	-0.0221523781106814	undirected	7-Ketodeoxycholic acid	Acetylcholine
+7-Ketodeoxycholic acid	Enterolactone	0.130769487863123	undirected	7-Ketodeoxycholic acid	Enterolactone
+Allocholic acid	N6,N6,N6-Trimethyl-L-lysine	-0.0217690438016107	undirected	Allocholic acid	N6,N6,N6-Trimethyl-L-lysine
+Elaidic acid	Enterolactone	0.120378649415814	undirected	Elaidic acid	Enterolactone
+Elaidic acid	beta-Tocopherol	0.114540030634798	undirected	Elaidic acid	beta-Tocopherol
+Elaidic acid	Stearidonic acid	0.335366663297146	undirected	Elaidic acid	Stearidonic acid
+Elaidic acid	Hydrocinchonine	0.104007646623681	undirected	Elaidic acid	Hydrocinchonine
+Elaidic acid	Cer(d18:1/16:0)	0.0925739242915859	undirected	Elaidic acid	Cer(d18:1/16:0)
+Elaidic acid	Cer(d18:0/18:0)	0.0539097944400242	undirected	Elaidic acid	Cer(d18:0/18:0)
+Elaidic acid	Stearic acid	0.0364164053817099	undirected	Elaidic acid	Stearic acid
+2-Furoic acid	L-Norleucine	-0.0593000265899868	undirected	2-Furoic acid	L-Norleucine
+2-Furoic acid	N-Acetylhistamine	-0.145358620771776	undirected	2-Furoic acid	N-Acetylhistamine
+2-Furoic acid	Alanylvaline	-0.0301256334848162	undirected	2-Furoic acid	Alanylvaline
+2-Furoic acid	Piperine	-0.270734003058995	undirected	2-Furoic acid	Piperine
+2-Furoic acid	(S)-Laudanosine	-0.154891241668753	undirected	2-Furoic acid	(S)-Laudanosine
+2-Furoic acid	Octanol	-0.299191359152619	undirected	2-Furoic acid	Octanol
+2-Furoic acid	N-Acetylputrescine	-0.296815549384653	undirected	2-Furoic acid	N-Acetylputrescine
+2-Furoic acid	N-Acetyl-Leu	-0.283794270712791	undirected	2-Furoic acid	N-Acetyl-Leu
+2-Furoic acid	Cinchonidine	-0.271513886279264	undirected	2-Furoic acid	Cinchonidine
+2-Furoic acid	Oleoylethanolamide	-0.0620217071543666	undirected	2-Furoic acid	Oleoylethanolamide
+2-Furoic acid	Prolylhydroxyproline	-0.128496217224252	undirected	2-Furoic acid	Prolylhydroxyproline
+Glutaric acid	Acetylcholine	0.114401699003718	undirected	Glutaric acid	Acetylcholine
+Glutaric acid	Behenic acid	0.198444367576671	undirected	Glutaric acid	Behenic acid
+Glutaric acid	1,3,5-Trihydroxybenzene	0.132509455987384	undirected	Glutaric acid	1,3,5-Trihydroxybenzene
+Glutaric acid	Mesalazine	0.100767534820236	undirected	Glutaric acid	Mesalazine
+Glutaric acid	beta-D-Glucosamine	0.381657686016102	undirected	Glutaric acid	beta-D-Glucosamine
+Acetylcholine	Behenic acid	0.0505201066994964	undirected	Acetylcholine	Behenic acid
+Acetylcholine	1,3,5-Trihydroxybenzene	0.0202438728918246	undirected	Acetylcholine	1,3,5-Trihydroxybenzene
+Acetylcholine	beta-D-Glucosamine	0.089579499366909	undirected	Acetylcholine	beta-D-Glucosamine
+Acetylcholine	Octanol	0.0233941473721469	undirected	Acetylcholine	Octanol
+Acetylcholine	N-Acetylputrescine	0.0234385465673604	undirected	Acetylcholine	N-Acetylputrescine
+Acetylcholine	N-Acetyl-Leu	0.0217403296734295	undirected	Acetylcholine	N-Acetyl-Leu
+Acetylcholine	Cinchonidine	0.023535652528371	undirected	Acetylcholine	Cinchonidine
+Acetylcholine	Prolylhydroxyproline	0.0297643522456946	undirected	Acetylcholine	Prolylhydroxyproline
+Androstanedione	Enterolactone	0.0642161654785738	undirected	Androstanedione	Enterolactone
+Androstanedione	Cer(d18:0/18:0)	0.0264466404959523	undirected	Androstanedione	Cer(d18:0/18:0)
+Androstanedione	Stearic acid	0.0210650675106309	undirected	Androstanedione	Stearic acid
+Citrulline	L-Norleucine	0.0955534780175385	undirected	Citrulline	L-Norleucine
+Citrulline	Acetone	0.177839845644096	undirected	Citrulline	Acetone
+Citrulline	Enterolactone	-0.0206157078250432	undirected	Citrulline	Enterolactone
+Citrulline	Mesalazine	-0.0210388560023156	undirected	Citrulline	Mesalazine
+Citrulline	Alanylisoleucine	0.508077002877209	undirected	Citrulline	Alanylisoleucine
+Citrulline	Alanylvaline	0.0895576644237465	undirected	Citrulline	Alanylvaline
+Citrulline	Corticosterone	0.0353864106450471	undirected	Citrulline	Corticosterone
+Citrulline	L-Cystine	0.556127700620918	undirected	Citrulline	L-Cystine
+Behenic acid	Trehalose	0.0337985852965762	undirected	Behenic acid	Trehalose
+Behenic acid	1,3,5-Trihydroxybenzene	0.0919272545852044	undirected	Behenic acid	1,3,5-Trihydroxybenzene
+Behenic acid	Mesalazine	0.0211741149651075	undirected	Behenic acid	Mesalazine
+Behenic acid	beta-D-Glucosamine	0.153972252892852	undirected	Behenic acid	beta-D-Glucosamine
+Trehalose	1,3,5-Trihydroxybenzene	0.0567193607294214	undirected	Trehalose	1,3,5-Trihydroxybenzene
+N6,N6,N6-Trimethyl-L-lysine	Alanylvaline	0.0354280471038057	undirected	N6,N6,N6-Trimethyl-L-lysine	Alanylvaline
+N6,N6,N6-Trimethyl-L-lysine	Leucyl-Glycine	0.47217737502388	undirected	N6,N6,N6-Trimethyl-L-lysine	Leucyl-Glycine
+L-Norleucine	N-Acetylhistamine	0.126907601347149	undirected	L-Norleucine	N-Acetylhistamine
+L-Norleucine	Alanylisoleucine	0.12558012735	undirected	L-Norleucine	Alanylisoleucine
+L-Norleucine	Alanylvaline	0.14577525641004	undirected	L-Norleucine	Alanylvaline
+L-Norleucine	L-Cystine	0.0759498324581635	undirected	L-Norleucine	L-Cystine
+L-Norleucine	Prolylhydroxyproline	0.0665330041423803	undirected	L-Norleucine	Prolylhydroxyproline
+Acetone	Enterolactone	-0.0402744935262588	undirected	Acetone	Enterolactone
+Acetone	Alanylisoleucine	0.137275293784859	undirected	Acetone	Alanylisoleucine
+Acetone	L-Cystine	0.149717138737934	undirected	Acetone	L-Cystine
+Acetone	Cer(d18:0/18:0)	-0.0925818827724087	undirected	Acetone	Cer(d18:0/18:0)
+Acetone	Stearic acid	-0.106847197223706	undirected	Acetone	Stearic acid
+Enterolactone	beta-Tocopherol	0.0239927368069546	undirected	Enterolactone	beta-Tocopherol
+Enterolactone	Stearidonic acid	0.118620883897236	undirected	Enterolactone	Stearidonic acid
+Enterolactone	Mesalazine	-0.0227382371480785	undirected	Enterolactone	Mesalazine
+Enterolactone	Hydrocinchonine	0.0255653965737043	undirected	Enterolactone	Hydrocinchonine
+Enterolactone	Cer(d18:0/18:0)	0.0276341926733428	undirected	Enterolactone	Cer(d18:0/18:0)
+Enterolactone	Stearic acid	0.021681720778394	undirected	Enterolactone	Stearic acid
+beta-Tocopherol	Stearidonic acid	0.115869672328182	undirected	beta-Tocopherol	Stearidonic acid
+beta-Tocopherol	Hydrocinchonine	0.237383773676229	undirected	beta-Tocopherol	Hydrocinchonine
+beta-Tocopherol	Cer(d18:1/16:0)	0.23310617367016	undirected	beta-Tocopherol	Cer(d18:1/16:0)
+beta-Tocopherol	Cer(d18:0/18:0)	0.0540408538071534	undirected	beta-Tocopherol	Cer(d18:0/18:0)
+beta-Tocopherol	Leucyl-Glycine	-0.021915789901768	undirected	beta-Tocopherol	Leucyl-Glycine
+beta-Tocopherol	Stearic acid	0.0354986634110318	undirected	beta-Tocopherol	Stearic acid
+Stearidonic acid	Hydrocinchonine	0.102414448817914	undirected	Stearidonic acid	Hydrocinchonine
+Stearidonic acid	Cer(d18:1/16:0)	0.0827412218006612	undirected	Stearidonic acid	Cer(d18:1/16:0)
+Stearidonic acid	Cer(d18:0/18:0)	0.0570741095966355	undirected	Stearidonic acid	Cer(d18:0/18:0)
+Stearidonic acid	Stearic acid	0.0359816259394514	undirected	Stearidonic acid	Stearic acid
+N-Acetylhistamine	Alanylvaline	0.0581129498868408	undirected	N-Acetylhistamine	Alanylvaline
+N-Acetylhistamine	Prolylhydroxyproline	0.0828279214727636	undirected	N-Acetylhistamine	Prolylhydroxyproline
+1,3,5-Trihydroxybenzene	Mesalazine	0.0300083710788559	undirected	1,3,5-Trihydroxybenzene	Mesalazine
+1,3,5-Trihydroxybenzene	beta-D-Glucosamine	0.141108637164789	undirected	1,3,5-Trihydroxybenzene	beta-D-Glucosamine
+1,3,5-Trihydroxybenzene	Corticosterone	0.0437293389577756	undirected	1,3,5-Trihydroxybenzene	Corticosterone
+Mesalazine	Alanylisoleucine	-0.0248896912163333	undirected	Mesalazine	Alanylisoleucine
+Mesalazine	beta-D-Glucosamine	0.136423536497515	undirected	Mesalazine	beta-D-Glucosamine
+Mesalazine	Octanol	-0.021373281190873	undirected	Mesalazine	Octanol
+Mesalazine	N-Acetylputrescine	-0.0213462628458091	undirected	Mesalazine	N-Acetylputrescine
+Mesalazine	L-Cystine	-0.020985823581427	undirected	Mesalazine	L-Cystine
+Alanylisoleucine	Alanylvaline	0.12149312214823	undirected	Alanylisoleucine	Alanylvaline
+Alanylisoleucine	Corticosterone	0.029843223640113	undirected	Alanylisoleucine	Corticosterone
+Alanylisoleucine	L-Cystine	0.434053577529802	undirected	Alanylisoleucine	L-Cystine
+Alanylvaline	L-Cystine	0.0713942055215168	undirected	Alanylvaline	L-Cystine
+Alanylvaline	Prolylhydroxyproline	0.0628001024660171	undirected	Alanylvaline	Prolylhydroxyproline
+Alanylvaline	Leucyl-Glycine	0.0521447798858641	undirected	Alanylvaline	Leucyl-Glycine
+Piperine	(S)-Laudanosine	0.670972285154397	undirected	Piperine	(S)-Laudanosine
+Piperine	Octanol	0.835817846401061	undirected	Piperine	Octanol
+Piperine	N-Acetylputrescine	0.830170025081749	undirected	Piperine	N-Acetylputrescine
+Piperine	N-Acetyl-Leu	0.802726838190961	undirected	Piperine	N-Acetyl-Leu
+Piperine	Stanozolol	-0.0633654153895913	undirected	Piperine	Stanozolol
+Piperine	Cinchonidine	0.769383627480739	undirected	Piperine	Cinchonidine
+Piperine	Oleoylethanolamide	0.47015115875677	undirected	Piperine	Oleoylethanolamide
+Piperine	Corticosterone	0.020113867706678	undirected	Piperine	Corticosterone
+Piperine	Prolylhydroxyproline	0.302272576823673	undirected	Piperine	Prolylhydroxyproline
+beta-D-Glucosamine	Corticosterone	0.029088994349374	undirected	beta-D-Glucosamine	Corticosterone
+(S)-Laudanosine	Octanol	0.760428838574326	undirected	(S)-Laudanosine	Octanol
+(S)-Laudanosine	N-Acetylputrescine	0.759044268863516	undirected	(S)-Laudanosine	N-Acetylputrescine
+(S)-Laudanosine	N-Acetyl-Leu	0.727345348650651	undirected	(S)-Laudanosine	N-Acetyl-Leu
+(S)-Laudanosine	Stanozolol	-0.0462316284469584	undirected	(S)-Laudanosine	Stanozolol
+(S)-Laudanosine	Cinchonidine	0.718344399962701	undirected	(S)-Laudanosine	Cinchonidine
+(S)-Laudanosine	Oleoylethanolamide	0.318913400850281	undirected	(S)-Laudanosine	Oleoylethanolamide
+(S)-Laudanosine	Prolylhydroxyproline	0.192896938973157	undirected	(S)-Laudanosine	Prolylhydroxyproline
+Hydrocinchonine	Cer(d18:1/16:0)	0.316889431144166	undirected	Hydrocinchonine	Cer(d18:1/16:0)
+Hydrocinchonine	Cer(d18:0/18:0)	0.0226906610638369	undirected	Hydrocinchonine	Cer(d18:0/18:0)
+Octanol	N-Acetylputrescine	0.826474458886802	undirected	Octanol	N-Acetylputrescine
+Octanol	N-Acetyl-Leu	0.839528105249236	undirected	Octanol	N-Acetyl-Leu
+Octanol	Stanozolol	-0.0675446772979289	undirected	Octanol	Stanozolol
+Octanol	Cinchonidine	0.827953955026207	undirected	Octanol	Cinchonidine
+Octanol	Oleoylethanolamide	0.523047681221711	undirected	Octanol	Oleoylethanolamide
+Octanol	Corticosterone	0.0226095922093264	undirected	Octanol	Corticosterone
+Octanol	Prolylhydroxyproline	0.345452256404498	undirected	Octanol	Prolylhydroxyproline
+N-Acetylputrescine	N-Acetyl-Leu	0.834383623794741	undirected	N-Acetylputrescine	N-Acetyl-Leu
+N-Acetylputrescine	Stanozolol	-0.0671335338479038	undirected	N-Acetylputrescine	Stanozolol
+N-Acetylputrescine	Cinchonidine	0.823417451175869	undirected	N-Acetylputrescine	Cinchonidine
+N-Acetylputrescine	Oleoylethanolamide	0.52162974871532	undirected	N-Acetylputrescine	Oleoylethanolamide
+N-Acetylputrescine	Corticosterone	0.0228083933796178	undirected	N-Acetylputrescine	Corticosterone
+N-Acetylputrescine	Prolylhydroxyproline	0.34501189492744	undirected	N-Acetylputrescine	Prolylhydroxyproline
+N-Acetyl-Leu	Stanozolol	-0.0646500941672247	undirected	N-Acetyl-Leu	Stanozolol
+N-Acetyl-Leu	Cinchonidine	0.795115703012227	undirected	N-Acetyl-Leu	Cinchonidine
+N-Acetyl-Leu	Oleoylethanolamide	0.496617933355649	undirected	N-Acetyl-Leu	Oleoylethanolamide
+N-Acetyl-Leu	Corticosterone	0.020253917924772	undirected	N-Acetyl-Leu	Corticosterone
+N-Acetyl-Leu	Prolylhydroxyproline	0.320034217659998	undirected	N-Acetyl-Leu	Prolylhydroxyproline
+Stanozolol	Cinchonidine	-0.0607565189163393	undirected	Stanozolol	Cinchonidine
+Cinchonidine	Oleoylethanolamide	0.480695420300481	undirected	Cinchonidine	Oleoylethanolamide
+Cinchonidine	Prolylhydroxyproline	0.316459489423546	undirected	Cinchonidine	Prolylhydroxyproline
+Oleoylethanolamide	Corticosterone	0.0573697927837827	undirected	Oleoylethanolamide	Corticosterone
+Oleoylethanolamide	Prolylhydroxyproline	0.0780115263886407	undirected	Oleoylethanolamide	Prolylhydroxyproline
+Cer(d18:1/16:0)	Cer(d18:0/18:0)	0.0257787217314457	undirected	Cer(d18:1/16:0)	Cer(d18:0/18:0)
+Cer(d18:1/16:0)	Stearic acid	0.0280375814794835	undirected	Cer(d18:1/16:0)	Stearic acid
+Corticosterone	L-Cystine	0.0367406592150224	undirected	Corticosterone	L-Cystine
+Cer(d18:0/18:0)	Stearic acid	0.292746133227954	undirected	Cer(d18:0/18:0)	Stearic acid

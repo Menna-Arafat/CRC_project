@@ -30,9 +30,9 @@ wgcna-visualizations
 module-phenotype-correlation-plot
 samples-dendrogram-plot
 cluster-dendrogram-plot
-tom-plot-heatmap-of-correlated-proteins-across-all-modules
+tom-plot-heatmap-of-correlated-features-across-all-modules
 mds-plot
-tom-plot-heatmap-of-modules-for-selected-proteins-based-on-fold-change-or-de
+tom-plot-for-selected-features
 module-membership-vs-gene-significance-scatter-plot
 module-eigengene-differentiation
 function-for-module-eigengene-differentiation

@@ -197,9 +197,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="7.1" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#module-phenotype-correlation-plot"><i class="fa fa-check"></i><b>7.1</b> <strong>Module-phenotype Correlation Plot</strong></a></li>
 <li class="chapter" data-level="7.2" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#samples-dendrogram-plot"><i class="fa fa-check"></i><b>7.2</b> <strong>Samples Dendrogram Plot</strong></a></li>
 <li class="chapter" data-level="7.3" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#cluster-dendrogram-plot"><i class="fa fa-check"></i><b>7.3</b> <strong>Cluster Dendrogram Plot</strong></a></li>
-<li class="chapter" data-level="7.4" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#tom-plot-heatmap-of-correlated-proteins-across-all-modules"><i class="fa fa-check"></i><b>7.4</b> <strong>TOM plot (heatmap of correlated proteins across all modules)</strong></a></li>
+<li class="chapter" data-level="7.4" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#tom-plot-heatmap-of-correlated-features-across-all-modules"><i class="fa fa-check"></i><b>7.4</b> <strong>TOM plot (Heatmap of Correlated Features Across All Modules)</strong></a></li>
 <li class="chapter" data-level="7.5" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#mds-plot"><i class="fa fa-check"></i><b>7.5</b> <strong>MDS plot</strong></a></li>
-<li class="chapter" data-level="7.6" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#tom-plot-heatmap-of-modules-for-selected-proteins-based-on-fold-change-or-de"><i class="fa fa-check"></i><b>7.6</b> <strong>TOM plot/ heatmap of modules for selected proteins (based on fold change or DE)</strong></a></li>
+<li class="chapter" data-level="7.6" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#tom-plot-for-selected-features"><i class="fa fa-check"></i><b>7.6</b> <strong>TOM plot for Selected Features</strong></a></li>
 <li class="chapter" data-level="7.7" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#module-membership-vs-gene-significance-scatter-plot"><i class="fa fa-check"></i><b>7.7</b> <strong>Module Membership Vs Gene Significance Scatter plot</strong></a></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="module-eigengene-differentiation.html"><a href="module-eigengene-differentiation.html"><i class="fa fa-check"></i><b>8</b> Module Eigengene Differentiation</a>
@@ -426,8 +426,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb111-2"><a href="wgcna-visualizations.html#cb111-2" tabindex="-1"></a><span class="co">#Length of colors vector not compatible with number of objects in &#39;order&#39;.</span></span>
 <span id="cb111-3"><a href="wgcna-visualizations.html#cb111-3" tabindex="-1"></a><span class="co">#set good samples and good genes</span></span></code></pre></div>
 </div>
-<div id="tom-plot-heatmap-of-correlated-proteins-across-all-modules" class="section level2 hasAnchor" number="7.4">
-<h2><span class="header-section-number">7.4</span> <strong>TOM plot (heatmap of correlated proteins across all modules)</strong><a href="wgcna-visualizations.html#tom-plot-heatmap-of-correlated-proteins-across-all-modules" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="tom-plot-heatmap-of-correlated-features-across-all-modules" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> <strong>TOM plot (Heatmap of Correlated Features Across All Modules)</strong><a href="wgcna-visualizations.html#tom-plot-heatmap-of-correlated-features-across-all-modules" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="wgcna-visualizations.html#cb112-1" tabindex="-1"></a>dissTOM<span class="ot">=</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">TOMsimilarityFromExpr</span>(datExpr, <span class="at">power=</span> power) <span class="co">#datExpr samples in rows</span></span></code></pre></div>
 <pre><code>## TOM calculation: adjacency..
 ## ..will not use multithreading.
@@ -480,12 +480,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>## png 
 ##   2</code></pre>
 </div>
-<div id="tom-plot-heatmap-of-modules-for-selected-proteins-based-on-fold-change-or-de" class="section level2 hasAnchor" number="7.6">
-<h2><span class="header-section-number">7.6</span> <strong>TOM plot/ heatmap of modules for selected proteins (based on fold change or DE)</strong><a href="wgcna-visualizations.html#tom-plot-heatmap-of-modules-for-selected-proteins-based-on-fold-change-or-de" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="wgcna-visualizations.html#cb122-1" tabindex="-1"></a>genes<span class="ot">=</span> de<span class="sc">$</span>X</span>
-<span id="cb122-2"><a href="wgcna-visualizations.html#cb122-2" tabindex="-1"></a><span class="co"># subset data to have only selected proteins</span></span>
-<span id="cb122-3"><a href="wgcna-visualizations.html#cb122-3" tabindex="-1"></a>datExpr_subset<span class="ot">=</span> datExpr[,<span class="fu">colnames</span>(datExpr) <span class="sc">%in%</span> genes]</span>
-<span id="cb122-4"><a href="wgcna-visualizations.html#cb122-4" tabindex="-1"></a>dissTOM_subset<span class="ot">=</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">TOMsimilarityFromExpr</span>(datExpr_subset, <span class="at">power=</span> power)</span></code></pre></div>
+<div id="tom-plot-for-selected-features" class="section level2 hasAnchor" number="7.6">
+<h2><span class="header-section-number">7.6</span> <strong>TOM plot for Selected Features</strong><a href="wgcna-visualizations.html#tom-plot-for-selected-features" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="wgcna-visualizations.html#cb122-1" tabindex="-1"></a><span class="co"># Get Differentially expressed features</span></span>
+<span id="cb122-2"><a href="wgcna-visualizations.html#cb122-2" tabindex="-1"></a>genes<span class="ot">=</span> de<span class="sc">$</span>X</span>
+<span id="cb122-3"><a href="wgcna-visualizations.html#cb122-3" tabindex="-1"></a><span class="co"># subset data to have only selected proteins</span></span>
+<span id="cb122-4"><a href="wgcna-visualizations.html#cb122-4" tabindex="-1"></a>datExpr_subset<span class="ot">=</span> datExpr[,<span class="fu">colnames</span>(datExpr) <span class="sc">%in%</span> genes]</span>
+<span id="cb122-5"><a href="wgcna-visualizations.html#cb122-5" tabindex="-1"></a>dissTOM_subset<span class="ot">=</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">TOMsimilarityFromExpr</span>(datExpr_subset, <span class="at">power=</span> power)</span></code></pre></div>
 <pre><code>## TOM calculation: adjacency..
 ## ..will not use multithreading.
 ##  Fraction of slow calculations: 0.000000
@@ -691,15 +692,15 @@ gitbook.start({
 "size": 2
 },
 "edit": {
-"link": "https://github.com/Menna-Arafat/CRC_project/6_WGCNA_visualizations.rmd",
-"text": "Edit"
+"link": null,
+"text": null
 },
 "history": {
 "link": null,
 "text": null
 },
 "view": {
-"link": null,
+"link": "https://github.com/Menna-Arafat/CRC_project/blob/master/6_WGCNA_visualizations.rmd",
 "text": null
 },
 "download": ["mybook.epub"],
