@@ -94,8 +94,7 @@ net = blockwiseModules(datExpr, corType = "pearson", maxBlockSize = 5000,
 
 ```
 
-## **Visualizations**  
-### **Module-phenotype Correlation Plot**  
+## **Module-phenotype Correlation Plot**  
 ```{r ,warning = FALSE, message = FALSE}
 
 #Module trait correlation (visualize which module associated with what phenotype)
@@ -141,7 +140,7 @@ dev.off()
 
 ```
 
-### **Samples Dendrogram Plot**
+## **Samples Dendrogram Plot**
 ```{r ,warning = FALSE, message = FALSE}
 #Hierarchical clustering of samples, detect outlier samples,
 #and association of sample with certain trait
@@ -179,7 +178,7 @@ dev.off()
 
 ```
 
-### **Cluster Dendrogram Plot**
+## **Cluster Dendrogram Plot**
 ```{r ,warning = FALSE, message = FALSE}
 plotDendro= function(){
 plotDendroAndColors(net$dendrograms[[1]],  net$colors,
@@ -202,7 +201,7 @@ dev.off()
 
 ```
 
-### **TOM plot (heatmap of correlated proteins across all modules)**
+## **TOM plot (Heatmap of Correlated Features Across All Modules)**
 ```{r ,warning = FALSE, message = FALSE}
 dissTOM= 1 - TOMsimilarityFromExpr(datExpr, power= power) #datExpr samples in rows
 dendro= net$dendrograms[[1]]
@@ -224,7 +223,7 @@ dev.off()
 
 ```
 
-### **MDS plot**
+## **MDS plot**
 ```{r ,warning = FALSE, message = FALSE}
 
 dissTOM= 1 - TOMsimilarityFromExpr(datExpr, power= 5)
@@ -242,8 +241,9 @@ dev.off()
 
 ```
 
-### **TOM plot/ heatmap of modules for selected proteins (based on fold change or DE)**
+## **TOM plot for Selected Features**
 ```{r ,warning = FALSE, message = FALSE}
+# Get Differentially expressed features
 genes= de$X
 # subset data to have only selected proteins
 datExpr_subset= datExpr[,colnames(datExpr) %in% genes]
@@ -264,93 +264,6 @@ dev.off()
 
 ```
 
-### **Chord plot of hubgenes and corresponding modules**
-```{r ,warning = FALSE, message = FALSE}
-module_hubs= read.csv(paste0(mypath,"output/module_hubs.csv")) 
-colnames(module_hubs)=gsub("_hub", "", names(module_hubs) )
-# We can plot only the hub features of significant modules (Module differentiation output)
-module_sig= read.csv(paste0(mypath,"output/ME_differentiation.csv")) 
-m.sig= module_sig$module[module_sig$sig== "***"]
-module_hubs= module_hubs |>  dplyr::select(m.sig)
-
-#build similarity/ design matrix
-keydrivers= unlist(module_hubs) |>  unique() 
-keydrivers= keydrivers[keydrivers != "" & !is.na(keydrivers)]
-mtx= matrix(nrow= ncol(module_hubs), ncol = length( keydrivers)) 
-row.names(mtx)= colnames(module_hubs)
-colnames(mtx)= paste0(keydrivers)
-
-#build similarity matrix 
-#colnames of matrix included in keydrivers specified for certain module/ phenotype(rows) then put in 1
-mod= apply(module_hubs, 2, function(x) as.list(x))
-
-for (i in seq_along(mod)){
-  for (j in 1:ncol(mtx)) {
-    if ( colnames(mtx)[j] %in% mod[[i]] ) {
-      mtx[i, j] <- 1
-    } else {
-      mtx[i, j] <- 0
-    }
-  }
-}
-
-# make shorter row names
-colnames(mtx)=  substr(colnames(mtx), 1, 25) 
-library(circlize)
-
-# Define chord plot function
-plot_chord_hubs <- function() {
-  par(cex = 0.8, mar = c(1, 1, 1, 1))
-  circos.par(
-    gap.degree = 1,
-    track.margin = c(0.05, 0.05),
-    canvas.xlim = c(-1.2, 1.2),
-    canvas.ylim = c(-1.2, 1.2),
-    points.overflow.warning = FALSE
-  )
-  
-  chordDiagram(
-    mtx,
-    annotationTrack = "grid",
-    transparency = 0.5
-  )
-  
-  # Labels customization
-  labels_to_asterisk <- NULL  # Example: c("TP53", "MYC")
-  labels_red <- NULL          # Example: c("BRCA1", "EGFR")
-  
-  circos.track(track.index = 1, panel.fun = function(x, y) {
-    label <- CELL_META$sector.index
-    modified_label <- ifelse(label %in% labels_to_asterisk,
-                             paste0(label, " ***"),
-                             label)
-    label_color <- ifelse(label %in% labels_red, "red", "black")
-    
-    circos.text(
-      CELL_META$xcenter,
-      CELL_META$cell.ylim[2] * 3.5,
-      modified_label,
-      col = label_color,
-      cex = 0.7,
-      font = 2,
-      facing = "clockwise",
-      niceFacing = TRUE,
-      adj = c(0, 0)
-    )
-  }, bg.border = NA)
-  
-  circos.clear()
-}
-
-# Display
-plot_chord_hubs()
-
-# Save
-png(paste0(mypath,"plots/chord_plot_hubs.png"), width = 9000, height = 9000, res = 600)
-plot_chord_hubs()
-dev.off()
-
-```
 
 ```{r ,warning = FALSE, message = FALSE}
 # Intramodular analysis: identifying genes with high Gene Significance (GS), i.e., strong association with the phenotype, 
@@ -365,7 +278,7 @@ dim(GS.lvl)
 
 ```
 
-### **Module Membership Vs Gene Significance Scatter plot**
+## **Module Membership Vs Gene Significance Scatter plot**
 ```{r ,warning = FALSE, message = FALSE}
 # Define plotting function
 plot_MM_vs_GS <- function() {
@@ -408,4 +321,7 @@ png(paste0(mypath,"plots/mm_vs_sig.png"), width = 800, height = 700)
 plot_MM_vs_GS()
 dev.off()
 
+```
+```{r, echo=FALSE}
+sessionInfo()
 ```

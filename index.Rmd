@@ -4,15 +4,9 @@ author: "Menna Arafat"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 documentclass: book
-# url: your book url like https://bookdown.org/yihui/bookdown
-# github-repo:  
-# cover-image: path to the social sharing image like images/cover.jpg
+github-repo: https://github.com/Menna-Arafat/CRC_project 
 description: |
-  This book presents an end-to-end pipeline for metabolomics analysis, including raw data preprocessing, downstream analysis, visualization, Co-expression Network Analysis (WGCNA), and MetaboAnalyst integration.
- The workflow does not include the manual curation step that is to compare MS/MS experimental spectra to reference libraries (e.g., HMDB, METLIN, GNPS, MassBank).
-  The whole pipeline was applied in our published study: Ramzy, A., Abdelmoneim, T.K., Arafat, M. et al. (2025), "Metabolomic analysis reveals key changes in amino acid metabolism in colorectal cancer patients" (Amino Acids, 57:22). https://doi.org/10.1007/s00726-025-03448-3.
-  
-
+ This book presents an end-to-end pipeline for metabolomics analysis, including raw data preprocessing,  downstream analysis, visualization, Co-expression Network Analysis (WGCNA), and MetaboAnalyst integration. The workflow does not include the manual curation step that is to compare MS/MS experimental spectra to reference libraries (e.g., HMDB, METLIN, GNPS, MassBank). The whole pipeline was applied in our published study: Ramzy, A., Abdelmoneim, T.K., Arafat, M. et al. (2025), "Metabolomic analysis reveals key changes in amino acid metabolism in colorectal cancer patients" (Amino Acids, 57:22). https://doi.org/10.1007/s00726-025-03448-3.
 link-citations: yes
 ---
 # About {-}
@@ -21,10 +15,10 @@ This book presents a comprehensive, R-based pipeline for metabolomics data analy
 
 The pipeline has been applied in our published study: Ramzy, A., Abdelmoneim, T.K., Arafat, M., et al. (2025). Metabolomic analysis reveals key changes in amino acid metabolism in colorectal cancer patients. Amino Acids, 57, 22. https://doi.org/10.1007/s00726-025-03448-3
 
-**Acknowledgments**
+**Acknowledgments**  
 This pipeline builds upon the previous work of the bioinformaticians at the Proteomics Lab, 57357 Children’s Cancer Hospital Egypt (CCHE): Mohamed Soudy, Abdelrahman Atef, Ali Mostafa, Ahmed Karam, and Menna Arafat, as well as publicly available resources.
 
-**References**
+**References**  
 Horvath, S. (2011). Weighted network analysis: Applications in genomics and systems biology. Springer. https://doi.org/10.1007/978-1-4419-8819-5
 
 Xia Lab. (2025, August 9). MetaboAnalystR Tutorial. MetaboAnalyst – MetaboAnalystR 4.0 Documentation. Retrieved August 24, 2025, from https://www.metaboanalyst.ca/docs/RTutorial.xhtml

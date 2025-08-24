@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Section 3 Metaboanalyst Pipeline | Network-Based Metabolomics in R: Data Preprocessing, Co-expression Network Analysis, and MetaboAnalyst Workflows</title>
+  <meta name="description" content="This book presents an end-to-end pipeline for metabolomics analysis, including raw data preprocessing, downstream analysis, visualization, Co-expression Network Analysis (WGCNA), and MetaboAnalyst integration. The workflow does not include the manual curation step that is to compare MS/MS experimental spectra to reference libraries (e.g., HMDB, METLIN, GNPS, MassBank). The whole pipeline was applied in our published study: Ramzy, A., Abdelmoneim, T.K., Arafat, M. et al. (2025), “Metabolomic analysis reveals key changes in amino acid metabolism in colorectal cancer patients” (Amino Acids, 57:22). https://doi.org/10.1007/s00726-025-03448-3." />
+  <meta name="generator" content="bookdown 0.40 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Section 3 Metaboanalyst Pipeline | Network-Based Metabolomics in R: Data Preprocessing, Co-expression Network Analysis, and MetaboAnalyst Workflows" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="This book presents an end-to-end pipeline for metabolomics analysis, including raw data preprocessing, downstream analysis, visualization, Co-expression Network Analysis (WGCNA), and MetaboAnalyst integration. The workflow does not include the manual curation step that is to compare MS/MS experimental spectra to reference libraries (e.g., HMDB, METLIN, GNPS, MassBank). The whole pipeline was applied in our published study: Ramzy, A., Abdelmoneim, T.K., Arafat, M. et al. (2025), “Metabolomic analysis reveals key changes in amino acid metabolism in colorectal cancer patients” (Amino Acids, 57:22). https://doi.org/10.1007/s00726-025-03448-3." />
+  <meta name="github-repo" content="https://github.com/Menna-Arafat/CRC_project" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Section 3 Metaboanalyst Pipeline | Network-Based Metabolomics in R: Data Preprocessing, Co-expression Network Analysis, and MetaboAnalyst Workflows" />
+  
+  <meta name="twitter:description" content="This book presents an end-to-end pipeline for metabolomics analysis, including raw data preprocessing, downstream analysis, visualization, Co-expression Network Analysis (WGCNA), and MetaboAnalyst integration. The workflow does not include the manual curation step that is to compare MS/MS experimental spectra to reference libraries (e.g., HMDB, METLIN, GNPS, MassBank). The whole pipeline was applied in our published study: Ramzy, A., Abdelmoneim, T.K., Arafat, M. et al. (2025), “Metabolomic analysis reveals key changes in amino acid metabolism in colorectal cancer patients” (Amino Acids, 57:22). https://doi.org/10.1007/s00726-025-03448-3." />
+  
+
+<meta name="author" content="Menna Arafat" />
+
+
+<meta name="date" content="2025-08-24" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="dimensionality-reduction-techniques.html"/>
+<link rel="next" href="downstream-visualizations.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="libs/datatables-binding-0.33/datatables.js"></script>
+<link href="libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+<link href="libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet" />
+<script src="libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Network-Based Metabolomics Analysis in R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About</a></li>
+<li class="chapter" data-level="1" data-path="metabolomic-raw-data-processing.html"><a href="metabolomic-raw-data-processing.html"><i class="fa fa-check"></i><b>1</b> Metabolomic Raw data Processing</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="metabolomic-raw-data-processing.html"><a href="metabolomic-raw-data-processing.html#internal-functions"><i class="fa fa-check"></i><b>1.1</b> <strong>Internal Functions</strong></a></li>
+<li class="chapter" data-level="1.2" data-path="metabolomic-raw-data-processing.html"><a href="metabolomic-raw-data-processing.html#wrapper-function"><i class="fa fa-check"></i><b>1.2</b> <strong>Wrapper Function</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="dimensionality-reduction-techniques.html"><a href="dimensionality-reduction-techniques.html"><i class="fa fa-check"></i><b>2</b> Dimensionality Reduction Techniques</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="dimensionality-reduction-techniques.html"><a href="dimensionality-reduction-techniques.html#input-data-preparation-for-metaboanalyst"><i class="fa fa-check"></i><b>2.1</b> <strong>Input data Preparation for Metaboanalyst</strong></a></li>
+<li class="chapter" data-level="2.2" data-path="dimensionality-reduction-techniques.html"><a href="dimensionality-reduction-techniques.html#pca"><i class="fa fa-check"></i><b>2.2</b> <strong>PCA</strong></a></li>
+<li class="chapter" data-level="2.3" data-path="dimensionality-reduction-techniques.html"><a href="dimensionality-reduction-techniques.html#pls-da"><i class="fa fa-check"></i><b>2.3</b> <strong>PLS-DA</strong></a></li>
+<li class="chapter" data-level="2.4" data-path="dimensionality-reduction-techniques.html"><a href="dimensionality-reduction-techniques.html#splsda"><i class="fa fa-check"></i><b>2.4</b> <strong>splsda</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="metaboanalyst-pipeline.html"><a href="metaboanalyst-pipeline.html"><i class="fa fa-check"></i><b>3</b> Metaboanalyst Pipeline</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="metaboanalyst-pipeline.html"><a href="metaboanalyst-pipeline.html#normality-assessment"><i class="fa fa-check"></i><b>3.1</b> <strong>Normality Assessment</strong></a></li>
+<li class="chapter" data-level="3.2" data-path="metaboanalyst-pipeline.html"><a href="metaboanalyst-pipeline.html#metaboanalystr-object-initialization"><i class="fa fa-check"></i><b>3.2</b> <strong>MetaboAnalystR Object Initialization</strong></a></li>
+<li class="chapter" data-level="3.3" data-path="metaboanalyst-pipeline.html"><a href="metaboanalyst-pipeline.html#auto-scaleing-z-score-normalization"><i class="fa fa-check"></i><b>3.3</b> <strong>Auto-scaleing (z-score Normalization)</strong></a></li>
+<li class="chapter" data-level="3.4" data-path="metaboanalyst-pipeline.html"><a href="metaboanalyst-pipeline.html#post-normalization-normality-check"><i class="fa fa-check"></i><b>3.4</b> <strong>Post-Normalization Normality Check</strong></a></li>
+<li class="chapter" data-level="3.5" data-path="metaboanalyst-pipeline.html"><a href="metaboanalyst-pipeline.html#fold-change-analysis"><i class="fa fa-check"></i><b>3.5</b> <strong>Fold change Analysis</strong></a></li>
+<li class="chapter" data-level="3.6" data-path="metaboanalyst-pipeline.html"><a href="metaboanalyst-pipeline.html#differential-expression-analysis"><i class="fa fa-check"></i><b>3.6</b> <strong>Differential Expression Analysis</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="downstream-visualizations.html"><a href="downstream-visualizations.html"><i class="fa fa-check"></i><b>4</b> Downstream Visualizations</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="downstream-visualizations.html"><a href="downstream-visualizations.html#volcano-plot"><i class="fa fa-check"></i><b>4.1</b> <strong>Volcano Plot</strong></a></li>
+<li class="chapter" data-level="4.2" data-path="downstream-visualizations.html"><a href="downstream-visualizations.html#heatmap-plot"><i class="fa fa-check"></i><b>4.2</b> <strong>Heatmap Plot</strong></a></li>
+<li class="chapter" data-level="4.3" data-path="downstream-visualizations.html"><a href="downstream-visualizations.html#box-plots"><i class="fa fa-check"></i><b>4.3</b> <strong>Box Plots</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="functional-enrichment.html"><a href="functional-enrichment.html"><i class="fa fa-check"></i><b>5</b> Functional Enrichment</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="functional-enrichment.html"><a href="functional-enrichment.html#data-preparation"><i class="fa fa-check"></i><b>5.1</b> <strong>Data Preparation</strong></a></li>
+<li class="chapter" data-level="5.2" data-path="functional-enrichment.html"><a href="functional-enrichment.html#enrichment-plot"><i class="fa fa-check"></i><b>5.2</b> <strong>Enrichment plot</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="wgcna-pipeline.html"><a href="wgcna-pipeline.html"><i class="fa fa-check"></i><b>6</b> WGCNA Pipeline</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="wgcna-pipeline.html"><a href="wgcna-pipeline.html#wgcna-pipeline-1"><i class="fa fa-check"></i><b>6.1</b> <strong>WGCNA Pipeline</strong></a>
+<ul>
+<li class="chapter" data-level="6.1.1" data-path="wgcna-pipeline.html"><a href="wgcna-pipeline.html#choose-appropriate-power-for-soft-thresholding"><i class="fa fa-check"></i><b>6.1.1</b> <strong>Choose appropriate power for soft-thresholding</strong></a></li>
+<li class="chapter" data-level="6.1.2" data-path="wgcna-pipeline.html"><a href="wgcna-pipeline.html#set-main-parameters"><i class="fa fa-check"></i><b>6.1.2</b> <strong>Set Main Parameters</strong></a></li>
+<li class="chapter" data-level="6.1.3" data-path="wgcna-pipeline.html"><a href="wgcna-pipeline.html#wgcna-main-function"><i class="fa fa-check"></i><b>6.1.3</b> <strong>WGCNA Main Function</strong></a></li>
+<li class="chapter" data-level="6.1.4" data-path="wgcna-pipeline.html"><a href="wgcna-pipeline.html#run-wgcna"><i class="fa fa-check"></i><b>6.1.4</b> <strong>Run WGCNA</strong></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html"><i class="fa fa-check"></i><b>7</b> WGCNA Visualizations</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#module-phenotype-correlation-plot"><i class="fa fa-check"></i><b>7.1</b> <strong>Module-phenotype Correlation Plot</strong></a></li>
+<li class="chapter" data-level="7.2" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#samples-dendrogram-plot"><i class="fa fa-check"></i><b>7.2</b> <strong>Samples Dendrogram Plot</strong></a></li>
+<li class="chapter" data-level="7.3" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#cluster-dendrogram-plot"><i class="fa fa-check"></i><b>7.3</b> <strong>Cluster Dendrogram Plot</strong></a></li>
+<li class="chapter" data-level="7.4" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#tom-plot-heatmap-of-correlated-proteins-across-all-modules"><i class="fa fa-check"></i><b>7.4</b> <strong>TOM plot (heatmap of correlated proteins across all modules)</strong></a></li>
+<li class="chapter" data-level="7.5" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#mds-plot"><i class="fa fa-check"></i><b>7.5</b> <strong>MDS plot</strong></a></li>
+<li class="chapter" data-level="7.6" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#tom-plot-heatmap-of-modules-for-selected-proteins-based-on-fold-change-or-de"><i class="fa fa-check"></i><b>7.6</b> <strong>TOM plot/ heatmap of modules for selected proteins (based on fold change or DE)</strong></a></li>
+<li class="chapter" data-level="7.7" data-path="wgcna-visualizations.html"><a href="wgcna-visualizations.html#module-membership-vs-gene-significance-scatter-plot"><i class="fa fa-check"></i><b>7.7</b> <strong>Module Membership Vs Gene Significance Scatter plot</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="module-eigengene-differentiation.html"><a href="module-eigengene-differentiation.html"><i class="fa fa-check"></i><b>8</b> Module Eigengene Differentiation</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="module-eigengene-differentiation.html"><a href="module-eigengene-differentiation.html#function-for-module-eigengene-differentiation"><i class="fa fa-check"></i><b>8.1</b> <strong>Function for Module eigengene differentiation</strong></a></li>
+<li class="chapter" data-level="8.2" data-path="module-eigengene-differentiation.html"><a href="module-eigengene-differentiation.html#horizontal-bar-plot"><i class="fa fa-check"></i><b>8.2</b> <strong>Horizontal Bar plot</strong></a></li>
+<li class="chapter" data-level="8.3" data-path="module-eigengene-differentiation.html"><a href="module-eigengene-differentiation.html#chord-plot-of-hubgenes-and-corresponding-modules"><i class="fa fa-check"></i><b>8.3</b> <strong>Chord plot of hubgenes and corresponding modules</strong></a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Network-Based Metabolomics in R: Data Preprocessing, Co-expression Network Analysis, and MetaboAnalyst Workflows</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="metaboanalyst-pipeline" class="section level1 hasAnchor" number="3">
+<h1><span class="header-section-number">Section 3</span> Metaboanalyst Pipeline<a href="metaboanalyst-pipeline.html#metaboanalyst-pipeline" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<blockquote>
+<p><strong>Description</strong>: This pipeline performs a complete statistical workflow for preprocessing and differential analysis of metabolomics data using MetaboAnalystR package.</p>
+</blockquote>
+<p><strong>Project Initialization</strong></p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="metaboanalyst-pipeline.html#cb34-1" tabindex="-1"></a>mypath<span class="ot">=</span> <span class="st">&quot;C:/Users/USER/Documents/Github/CRC_project/&quot;</span></span>
+<span id="cb34-2"><a href="metaboanalyst-pipeline.html#cb34-2" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">&quot;output&quot;</span>)</span>
+<span id="cb34-3"><a href="metaboanalyst-pipeline.html#cb34-3" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">&quot;plots&quot;</span>)</span>
+<span id="cb34-4"><a href="metaboanalyst-pipeline.html#cb34-4" tabindex="-1"></a><span class="fu">dir.create</span>(<span class="st">&quot;input&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="metaboanalyst-pipeline.html#cb35-1" tabindex="-1"></a><span class="co">#Load libraries</span></span>
+<span id="cb35-2"><a href="metaboanalyst-pipeline.html#cb35-2" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<span id="cb35-3"><a href="metaboanalyst-pipeline.html#cb35-3" tabindex="-1"></a><span class="fu">library</span>(plyr)</span>
+<span id="cb35-4"><a href="metaboanalyst-pipeline.html#cb35-4" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb35-5"><a href="metaboanalyst-pipeline.html#cb35-5" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb35-6"><a href="metaboanalyst-pipeline.html#cb35-6" tabindex="-1"></a><span class="fu">library</span>(openxlsx)</span>
+<span id="cb35-7"><a href="metaboanalyst-pipeline.html#cb35-7" tabindex="-1"></a><span class="fu">library</span>(cowplot)</span>
+<span id="cb35-8"><a href="metaboanalyst-pipeline.html#cb35-8" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb35-9"><a href="metaboanalyst-pipeline.html#cb35-9" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;MetaboAnalystR&quot;</span>)</span>
+<span id="cb35-10"><a href="metaboanalyst-pipeline.html#cb35-10" tabindex="-1"></a></span>
+<span id="cb35-11"><a href="metaboanalyst-pipeline.html#cb35-11" tabindex="-1"></a><span class="co">#load data</span></span>
+<span id="cb35-12"><a href="metaboanalyst-pipeline.html#cb35-12" tabindex="-1"></a>data<span class="ot">=</span> <span class="fu">read.csv</span>(<span class="fu">paste0</span>(mypath, <span class="st">&quot;input/data_for_downstream.csv&quot;</span>)) </span>
+<span id="cb35-13"><a href="metaboanalyst-pipeline.html#cb35-13" tabindex="-1"></a>data <span class="ot">=</span> data <span class="sc">|&gt;</span>  <span class="fu">column_to_rownames</span>(<span class="fu">colnames</span>(data)[<span class="dv">1</span>]) </span></code></pre></div>
+<div id="normality-assessment" class="section level2 hasAnchor" number="3.1">
+<h2><span class="header-section-number">3.1</span> <strong>Normality Assessment</strong><a href="metaboanalyst-pipeline.html#normality-assessment" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>A custom check_normality() function evaluates the distribution of metabolite intensities before and after normalization using: Shapiro-Wilk test on sample means &amp; Density and QQ plots for visual inspection.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="metaboanalyst-pipeline.html#cb36-1" tabindex="-1"></a><span class="co"># check normality of the data</span></span>
+<span id="cb36-2"><a href="metaboanalyst-pipeline.html#cb36-2" tabindex="-1"></a>check_normality <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">output_dir =</span> <span class="fu">paste0</span>(mypath, <span class="st">&quot;plots/&quot;</span>), <span class="at">prefix =</span> <span class="st">&quot;before_norm&quot;</span>) {</span>
+<span id="cb36-3"><a href="metaboanalyst-pipeline.html#cb36-3" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(output_dir)) <span class="fu">dir.create</span>(output_dir, <span class="at">recursive =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-4"><a href="metaboanalyst-pipeline.html#cb36-4" tabindex="-1"></a>  <span class="co"># Convert to numeric</span></span>
+<span id="cb36-5"><a href="metaboanalyst-pipeline.html#cb36-5" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">mutate_all</span>(data, <span class="sc">~</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(.)))</span>
+<span id="cb36-6"><a href="metaboanalyst-pipeline.html#cb36-6" tabindex="-1"></a>  <span class="co"># Row-wise means</span></span>
+<span id="cb36-7"><a href="metaboanalyst-pipeline.html#cb36-7" tabindex="-1"></a>  row_means <span class="ot">&lt;-</span> <span class="fu">apply</span>(data, <span class="dv">1</span>, mean, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-8"><a href="metaboanalyst-pipeline.html#cb36-8" tabindex="-1"></a>  <span class="co"># Shapiro-Wilk test</span></span>
+<span id="cb36-9"><a href="metaboanalyst-pipeline.html#cb36-9" tabindex="-1"></a>  shapiro_result <span class="ot">&lt;-</span> <span class="fu">shapiro.test</span>(row_means)</span>
+<span id="cb36-10"><a href="metaboanalyst-pipeline.html#cb36-10" tabindex="-1"></a>  message <span class="ot">&lt;-</span> <span class="cf">if</span> (shapiro_result<span class="sc">$</span>p.value <span class="sc">&gt;</span> <span class="fl">0.05</span>) {</span>
+<span id="cb36-11"><a href="metaboanalyst-pipeline.html#cb36-11" tabindex="-1"></a>    <span class="st">&quot;Parametric&quot;</span></span>
+<span id="cb36-12"><a href="metaboanalyst-pipeline.html#cb36-12" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb36-13"><a href="metaboanalyst-pipeline.html#cb36-13" tabindex="-1"></a>    <span class="st">&quot;Non-parametric&quot;</span></span>
+<span id="cb36-14"><a href="metaboanalyst-pipeline.html#cb36-14" tabindex="-1"></a>  }</span>
+<span id="cb36-15"><a href="metaboanalyst-pipeline.html#cb36-15" tabindex="-1"></a></span>
+<span id="cb36-16"><a href="metaboanalyst-pipeline.html#cb36-16" tabindex="-1"></a>    <span class="co"># Density Plot </span></span>
+<span id="cb36-17"><a href="metaboanalyst-pipeline.html#cb36-17" tabindex="-1"></a>  df_means <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">value =</span>   row_means )</span>
+<span id="cb36-18"><a href="metaboanalyst-pipeline.html#cb36-18" tabindex="-1"></a>  dens_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_means, <span class="fu">aes</span>(<span class="at">x =</span> value)) <span class="sc">+</span></span>
+<span id="cb36-19"><a href="metaboanalyst-pipeline.html#cb36-19" tabindex="-1"></a>    <span class="fu">geom_density</span>(<span class="at">fill =</span> <span class="st">&quot;#69b3a2&quot;</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">size =</span> <span class="fl">0.4</span>) <span class="sc">+</span></span>
+<span id="cb36-20"><a href="metaboanalyst-pipeline.html#cb36-20" tabindex="-1"></a>    <span class="fu">geom_rug</span>(<span class="at">alpha =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb36-21"><a href="metaboanalyst-pipeline.html#cb36-21" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Density of Metabolites Means&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Mean Intensity&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Density&quot;</span>) <span class="sc">+</span></span>
+<span id="cb36-22"><a href="metaboanalyst-pipeline.html#cb36-22" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb36-23"><a href="metaboanalyst-pipeline.html#cb36-23" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb36-24"><a href="metaboanalyst-pipeline.html#cb36-24" tabindex="-1"></a>      <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;white&quot;</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb36-25"><a href="metaboanalyst-pipeline.html#cb36-25" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;white&quot;</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb36-26"><a href="metaboanalyst-pipeline.html#cb36-26" tabindex="-1"></a>      <span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb36-27"><a href="metaboanalyst-pipeline.html#cb36-27" tabindex="-1"></a>      <span class="at">axis.line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>),</span>
+<span id="cb36-28"><a href="metaboanalyst-pipeline.html#cb36-28" tabindex="-1"></a>      <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>),</span>
+<span id="cb36-29"><a href="metaboanalyst-pipeline.html#cb36-29" tabindex="-1"></a>      <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb36-30"><a href="metaboanalyst-pipeline.html#cb36-30" tabindex="-1"></a>      <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
+<span id="cb36-31"><a href="metaboanalyst-pipeline.html#cb36-31" tabindex="-1"></a>    )</span>
+<span id="cb36-32"><a href="metaboanalyst-pipeline.html#cb36-32" tabindex="-1"></a>  </span>
+<span id="cb36-33"><a href="metaboanalyst-pipeline.html#cb36-33" tabindex="-1"></a>  <span class="co"># QQ-Plot</span></span>
+<span id="cb36-34"><a href="metaboanalyst-pipeline.html#cb36-34" tabindex="-1"></a>  df_means <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">value =</span> row_means)</span>
+<span id="cb36-35"><a href="metaboanalyst-pipeline.html#cb36-35" tabindex="-1"></a>  qq_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df_means, <span class="fu">aes</span>(<span class="at">sample =</span> value)) <span class="sc">+</span> </span>
+<span id="cb36-36"><a href="metaboanalyst-pipeline.html#cb36-36" tabindex="-1"></a>    <span class="fu">geom_qq</span>(<span class="at">linewidth =</span> <span class="fl">2.5</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span> </span>
+<span id="cb36-37"><a href="metaboanalyst-pipeline.html#cb36-37" tabindex="-1"></a>    <span class="fu">geom_qq_line</span>(<span class="at">linewidth =</span> <span class="fl">0.7</span>, <span class="at">colour =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb36-38"><a href="metaboanalyst-pipeline.html#cb36-38" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;QQ Plot of Metabolite Means&quot;</span>, <span class="at">x =</span> <span class="st">&quot;Theoretical&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Intensity&quot;</span>) <span class="sc">+</span></span>
+<span id="cb36-39"><a href="metaboanalyst-pipeline.html#cb36-39" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb36-40"><a href="metaboanalyst-pipeline.html#cb36-40" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb36-41"><a href="metaboanalyst-pipeline.html#cb36-41" tabindex="-1"></a>      <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;white&quot;</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb36-42"><a href="metaboanalyst-pipeline.html#cb36-42" tabindex="-1"></a>      <span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">&quot;white&quot;</span>, <span class="at">color =</span> <span class="cn">NA</span>),</span>
+<span id="cb36-43"><a href="metaboanalyst-pipeline.html#cb36-43" tabindex="-1"></a>      <span class="at">panel.grid =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb36-44"><a href="metaboanalyst-pipeline.html#cb36-44" tabindex="-1"></a>      <span class="at">axis.line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>),</span>
+<span id="cb36-45"><a href="metaboanalyst-pipeline.html#cb36-45" tabindex="-1"></a>      <span class="at">axis.ticks =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">&quot;black&quot;</span>),</span>
+<span id="cb36-46"><a href="metaboanalyst-pipeline.html#cb36-46" tabindex="-1"></a>      <span class="at">text =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>),</span>
+<span id="cb36-47"><a href="metaboanalyst-pipeline.html#cb36-47" tabindex="-1"></a>      <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>)</span>
+<span id="cb36-48"><a href="metaboanalyst-pipeline.html#cb36-48" tabindex="-1"></a>    )</span>
+<span id="cb36-49"><a href="metaboanalyst-pipeline.html#cb36-49" tabindex="-1"></a>  </span>
+<span id="cb36-50"><a href="metaboanalyst-pipeline.html#cb36-50" tabindex="-1"></a>  <span class="co"># Combine both plots side by side</span></span>
+<span id="cb36-51"><a href="metaboanalyst-pipeline.html#cb36-51" tabindex="-1"></a>  combined <span class="ot">&lt;-</span> <span class="fu">plot_grid</span>(dens_plot, qq_plot, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>), <span class="at">label_size =</span> <span class="dv">16</span>)</span>
+<span id="cb36-52"><a href="metaboanalyst-pipeline.html#cb36-52" tabindex="-1"></a>  </span>
+<span id="cb36-53"><a href="metaboanalyst-pipeline.html#cb36-53" tabindex="-1"></a>  <span class="co"># Save combined plot</span></span>
+<span id="cb36-54"><a href="metaboanalyst-pipeline.html#cb36-54" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="at">filename =</span> <span class="fu">paste0</span>(output_dir, <span class="fu">paste0</span>(<span class="st">&quot;combined_&quot;</span>, prefix, <span class="st">&quot;.png&quot;</span>)),</span>
+<span id="cb36-55"><a href="metaboanalyst-pipeline.html#cb36-55" tabindex="-1"></a>         <span class="at">plot =</span> combined, <span class="at">dpi =</span> <span class="dv">600</span>, <span class="at">width =</span> <span class="dv">14</span>, <span class="at">height =</span> <span class="dv">6</span>, <span class="at">bg =</span> <span class="st">&quot;white&quot;</span>)</span>
+<span id="cb36-56"><a href="metaboanalyst-pipeline.html#cb36-56" tabindex="-1"></a>  </span>
+<span id="cb36-57"><a href="metaboanalyst-pipeline.html#cb36-57" tabindex="-1"></a>  <span class="fu">print</span>(message)</span>
+<span id="cb36-58"><a href="metaboanalyst-pipeline.html#cb36-58" tabindex="-1"></a>  <span class="fu">print</span>(combined)</span>
+<span id="cb36-59"><a href="metaboanalyst-pipeline.html#cb36-59" tabindex="-1"></a>  </span>
+<span id="cb36-60"><a href="metaboanalyst-pipeline.html#cb36-60" tabindex="-1"></a>  </span>
+<span id="cb36-61"><a href="metaboanalyst-pipeline.html#cb36-61" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(</span>
+<span id="cb36-62"><a href="metaboanalyst-pipeline.html#cb36-62" tabindex="-1"></a>    <span class="at">normality =</span> message,</span>
+<span id="cb36-63"><a href="metaboanalyst-pipeline.html#cb36-63" tabindex="-1"></a>    <span class="at">shapiro_p_value =</span> shapiro_result<span class="sc">$</span>p.value</span>
+<span id="cb36-64"><a href="metaboanalyst-pipeline.html#cb36-64" tabindex="-1"></a>    </span>
+<span id="cb36-65"><a href="metaboanalyst-pipeline.html#cb36-65" tabindex="-1"></a>  ))</span>
+<span id="cb36-66"><a href="metaboanalyst-pipeline.html#cb36-66" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="metaboanalyst-pipeline.html#cb37-1" tabindex="-1"></a><span class="co">#Apply the function</span></span>
+<span id="cb37-2"><a href="metaboanalyst-pipeline.html#cb37-2" tabindex="-1"></a>before_norm<span class="ot">=</span> <span class="fu">check_normality</span>(data, <span class="at">prefix =</span> <span class="st">&quot;before_norm&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Non-parametric&quot;</code></pre>
+<p><img src="mybook_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+<div id="metaboanalystr-object-initialization" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> <strong>MetaboAnalystR Object Initialization</strong><a href="metaboanalyst-pipeline.html#metaboanalystr-object-initialization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li>Missing value replacement, Data sanity checks, Automatic normalization</li>
+<li>Summary plots for metabolite and sample normalization</li>
+</ul>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="metaboanalyst-pipeline.html#cb39-1" tabindex="-1"></a><span class="co"># adjust the input format for metaboanalyst</span></span>
+<span id="cb39-2"><a href="metaboanalyst-pipeline.html#cb39-2" tabindex="-1"></a>group_dist<span class="ot">=</span> <span class="fu">gsub</span>(<span class="st">&quot;_.*&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="fu">colnames</span>(data))</span>
+<span id="cb39-3"><a href="metaboanalyst-pipeline.html#cb39-3" tabindex="-1"></a><span class="fu">print</span>(group_dist)</span></code></pre></div>
+<pre><code>##  [1] &quot;CRC&quot;  &quot;CRC&quot;  &quot;CRC&quot;  &quot;CRC&quot;  &quot;CRC&quot;  &quot;CRC&quot;  &quot;CRC&quot;  &quot;CRC&quot;  &quot;CRC&quot;  &quot;CRC&quot; 
+## [11] &quot;Ctrl&quot; &quot;Ctrl&quot; &quot;Ctrl&quot; &quot;Ctrl&quot; &quot;Ctrl&quot; &quot;Ctrl&quot; &quot;Ctrl&quot; &quot;Ctrl&quot; &quot;Ctrl&quot; &quot;Ctrl&quot;</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="metaboanalyst-pipeline.html#cb41-1" tabindex="-1"></a>data_formatted<span class="ot">=</span> <span class="fu">rbind</span>(group_dist, data)</span>
+<span id="cb41-2"><a href="metaboanalyst-pipeline.html#cb41-2" tabindex="-1"></a><span class="fu">write.csv</span>(data_formatted, <span class="fu">paste0</span>(mypath,<span class="st">&quot;output/for_metaboanalyst.csv&quot;</span>))</span></code></pre></div>
+</div>
+<div id="auto-scaleing-z-score-normalization" class="section level2 hasAnchor" number="3.3">
+<h2><span class="header-section-number">3.3</span> <strong>Auto-scaleing (z-score Normalization)</strong><a href="metaboanalyst-pipeline.html#auto-scaleing-z-score-normalization" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="metaboanalyst-pipeline.html#cb42-1" tabindex="-1"></a><span class="co">#&#39; ## setwd(&quot;New folder/&quot;)</span></span>
+<span id="cb42-2"><a href="metaboanalyst-pipeline.html#cb42-2" tabindex="-1"></a>mSet<span class="ot">&lt;-</span><span class="fu">InitDataObjects</span>(<span class="st">&quot;pktable&quot;</span>, <span class="st">&quot;stat&quot;</span>, <span class="cn">FALSE</span>)</span>
+<span id="cb42-3"><a href="metaboanalyst-pipeline.html#cb42-3" tabindex="-1"></a>mSet<span class="ot">&lt;-</span><span class="fu">Read.TextData</span>(mSet, <span class="fu">paste0</span>(mypath,<span class="st">&quot;output/for_metaboanalyst.csv&quot;</span>), <span class="st">&quot;colu&quot;</span>, <span class="st">&quot;disc&quot;</span>)</span>
+<span id="cb42-4"><a href="metaboanalyst-pipeline.html#cb42-4" tabindex="-1"></a>mSet<span class="ot">&lt;-</span><span class="fu">SanityCheckData</span>(mSet)</span></code></pre></div>
+<pre><code>##  [1] &quot;Successfully passed sanity check!&quot;                                                                                
+##  [2] &quot;Samples are not paired.&quot;                                                                                          
+##  [3] &quot;2 groups were detected in samples.&quot;                                                                               
+##  [4] &quot;Only English letters, numbers, underscore, hyphen and forward slash (/) are allowed.&quot;                             
+##  [5] &quot;&lt;font color=\&quot;orange\&quot;&gt;Other special characters or punctuations (if any) will be stripped off.&lt;/font&gt;&quot;            
+##  [6] &quot;All data values are numeric.&quot;                                                                                     
+##  [7] &quot;A total of 0 (0%) missing values were detected.&quot;                                                                  
+##  [8] &quot;&lt;u&gt;By default, missing values will be replaced by 1/5 of min positive values of their corresponding variables&lt;/u&gt;&quot;
+##  [9] &quot;Click the &lt;b&gt;Proceed&lt;/b&gt; button if you accept the default practice;&quot;                                              
+## [10] &quot;Or click the &lt;b&gt;Missing Values&lt;/b&gt; button to use other methods.&quot;</code></pre>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="metaboanalyst-pipeline.html#cb44-1" tabindex="-1"></a>mSet<span class="ot">&lt;-</span><span class="fu">ReplaceMin</span>(mSet)</span>
+<span id="cb44-2"><a href="metaboanalyst-pipeline.html#cb44-2" tabindex="-1"></a>mSet<span class="ot">&lt;-</span><span class="fu">PreparePrenormData</span>(mSet)</span>
+<span id="cb44-3"><a href="metaboanalyst-pipeline.html#cb44-3" tabindex="-1"></a>mSet<span class="ot">&lt;-</span><span class="fu">Normalization</span>(mSet, <span class="st">&quot;NULL&quot;</span>, <span class="st">&quot;NULL&quot;</span>, <span class="st">&quot;AutoNorm&quot;</span>, <span class="at">ratio=</span><span class="cn">FALSE</span>)</span>
+<span id="cb44-4"><a href="metaboanalyst-pipeline.html#cb44-4" tabindex="-1"></a>mSet<span class="ot">&lt;-</span><span class="fu">PlotNormSummary</span>(mSet, <span class="fu">paste0</span>(mypath,<span class="st">&quot;plots/metabolites_norm&quot;</span>), <span class="st">&quot;png&quot;</span>, <span class="dv">600</span>, <span class="at">width=</span><span class="cn">NA</span>)</span>
+<span id="cb44-5"><a href="metaboanalyst-pipeline.html#cb44-5" tabindex="-1"></a>mSet<span class="ot">&lt;-</span><span class="fu">PlotSampleNormSummary</span>(mSet, <span class="fu">paste0</span>(mypath,<span class="st">&quot;plots/sample_norm&quot;</span>), <span class="st">&quot;png&quot;</span>, <span class="dv">600</span>, <span class="at">width=</span><span class="cn">NA</span>)</span></code></pre></div>
+</div>
+<div id="post-normalization-normality-check" class="section level2 hasAnchor" number="3.4">
+<h2><span class="header-section-number">3.4</span> <strong>Post-Normalization Normality Check</strong><a href="metaboanalyst-pipeline.html#post-normalization-normality-check" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="metaboanalyst-pipeline.html#cb45-1" tabindex="-1"></a><span class="co">#normality check after normalization</span></span>
+<span id="cb45-2"><a href="metaboanalyst-pipeline.html#cb45-2" tabindex="-1"></a>X <span class="ot">&lt;-</span> mSet<span class="sc">$</span>dataSet<span class="sc">$</span>norm</span>
+<span id="cb45-3"><a href="metaboanalyst-pipeline.html#cb45-3" tabindex="-1"></a>after_norm<span class="ot">=</span> <span class="fu">check_normality</span>(X, <span class="at">prefix =</span> <span class="st">&quot;after_norm&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Non-parametric&quot;</code></pre>
+<p><img src="mybook_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+</div>
+<div id="fold-change-analysis" class="section level2 hasAnchor" number="3.5">
+<h2><span class="header-section-number">3.5</span> <strong>Fold change Analysis</strong><a href="metaboanalyst-pipeline.html#fold-change-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="metaboanalyst-pipeline.html#cb47-1" tabindex="-1"></a><span class="co"># Fold Change Analysis</span></span>
+<span id="cb47-2"><a href="metaboanalyst-pipeline.html#cb47-2" tabindex="-1"></a>mSet<span class="ot">&lt;-</span><span class="fu">FC.Anal</span>(mSet, <span class="dv">2</span>, <span class="dv">0</span>, <span class="cn">FALSE</span>) </span>
+<span id="cb47-3"><a href="metaboanalyst-pipeline.html#cb47-3" tabindex="-1"></a>fc <span class="ot">&lt;-</span> mSet<span class="sc">$</span>analSet<span class="sc">$</span>fc</span>
+<span id="cb47-4"><a href="metaboanalyst-pipeline.html#cb47-4" tabindex="-1"></a>fc_df <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">FC =</span> fc<span class="sc">$</span>fc.all, </span>
+<span id="cb47-5"><a href="metaboanalyst-pipeline.html#cb47-5" tabindex="-1"></a>                <span class="at">logFC =</span> fc<span class="sc">$</span>fc.log)</span></code></pre></div>
+</div>
+<div id="differential-expression-analysis" class="section level2 hasAnchor" number="3.6">
+<h2><span class="header-section-number">3.6</span> <strong>Differential Expression Analysis</strong><a href="metaboanalyst-pipeline.html#differential-expression-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="metaboanalyst-pipeline.html#cb48-1" tabindex="-1"></a><span class="co">#Differential expression</span></span>
+<span id="cb48-2"><a href="metaboanalyst-pipeline.html#cb48-2" tabindex="-1"></a><span class="cf">if</span>(after_norm<span class="sc">$</span>normality<span class="sc">==</span> <span class="st">&quot;Non-parametric&quot;</span>){</span>
+<span id="cb48-3"><a href="metaboanalyst-pipeline.html#cb48-3" tabindex="-1"></a>  mSet<span class="ot">&lt;-</span><span class="fu">Ttests.Anal</span>(mSet, <span class="at">nonpar =</span> T, <span class="fl">0.05</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="st">&quot;fdr&quot;</span>, <span class="at">all_results =</span> <span class="cn">TRUE</span>) </span>
+<span id="cb48-4"><a href="metaboanalyst-pipeline.html#cb48-4" tabindex="-1"></a>}<span class="cf">else</span>{</span>
+<span id="cb48-5"><a href="metaboanalyst-pipeline.html#cb48-5" tabindex="-1"></a>  mSet<span class="ot">&lt;-</span><span class="fu">Ttests.Anal</span>(mSet, <span class="at">nonpar =</span> F, <span class="fl">0.05</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="st">&quot;fdr&quot;</span>, <span class="at">all_results =</span> <span class="cn">TRUE</span>)  </span>
+<span id="cb48-6"><a href="metaboanalyst-pipeline.html#cb48-6" tabindex="-1"></a>}</span></code></pre></div>
+<pre><code>## [1] &quot;Performing regular t-tests ....&quot;
+## [1] &quot;A total of 134 significant features were found.&quot;</code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="metaboanalyst-pipeline.html#cb50-1" tabindex="-1"></a>tt.sig<span class="ot">=</span> mSet<span class="sc">$</span>analSet<span class="sc">$</span>tt<span class="sc">$</span>sig.mat <span class="sc">|&gt;</span>  <span class="fu">as.data.frame</span>()</span>
+<span id="cb50-2"><a href="metaboanalyst-pipeline.html#cb50-2" tabindex="-1"></a>fc.sig<span class="ot">=</span> fc_df[ <span class="fu">match</span>( <span class="fu">row.names</span>(tt.sig), <span class="fu">row.names</span>(fc_df)) , ]</span>
+<span id="cb50-3"><a href="metaboanalyst-pipeline.html#cb50-3" tabindex="-1"></a>sig_df<span class="ot">=</span> <span class="fu">cbind</span>(tt.sig, fc.sig )</span>
+<span id="cb50-4"><a href="metaboanalyst-pipeline.html#cb50-4" tabindex="-1"></a></span>
+<span id="cb50-5"><a href="metaboanalyst-pipeline.html#cb50-5" tabindex="-1"></a>tt.all<span class="ot">=</span>  <span class="fu">data.frame</span>(</span>
+<span id="cb50-6"><a href="metaboanalyst-pipeline.html#cb50-6" tabindex="-1"></a>         <span class="at">abs.t.score=</span> mSet[[<span class="st">&quot;analSet&quot;</span>]][[<span class="st">&quot;tt&quot;</span>]][[<span class="st">&quot;t.score&quot;</span>]],</span>
+<span id="cb50-7"><a href="metaboanalyst-pipeline.html#cb50-7" tabindex="-1"></a>         <span class="at">p.value=</span>  mSet[[<span class="st">&quot;analSet&quot;</span>]][[<span class="st">&quot;tt&quot;</span>]][[<span class="st">&quot;p.value&quot;</span>]],</span>
+<span id="cb50-8"><a href="metaboanalyst-pipeline.html#cb50-8" tabindex="-1"></a>         <span class="at">FDR =</span> <span class="fu">p.adjust</span>(mSet[[<span class="st">&quot;analSet&quot;</span>]][[<span class="st">&quot;tt&quot;</span>]][[<span class="st">&quot;p.value&quot;</span>]], <span class="at">method =</span> <span class="st">&quot;BH&quot;</span>)  <span class="co"># Benjamini-Hochberg</span></span>
+<span id="cb50-9"><a href="metaboanalyst-pipeline.html#cb50-9" tabindex="-1"></a>)</span>
+<span id="cb50-10"><a href="metaboanalyst-pipeline.html#cb50-10" tabindex="-1"></a>fc.all<span class="ot">=</span> fc_df[ <span class="fu">match</span>( <span class="fu">row.names</span>(tt.all), <span class="fu">row.names</span>(fc_df)) , ]</span>
+<span id="cb50-11"><a href="metaboanalyst-pipeline.html#cb50-11" tabindex="-1"></a>all_df<span class="ot">=</span> <span class="fu">cbind</span>(tt.all, fc.all )</span>
+<span id="cb50-12"><a href="metaboanalyst-pipeline.html#cb50-12" tabindex="-1"></a><span class="fu">print</span> (<span class="st">&quot;DE is Done!&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;DE is Done!&quot;</code></pre>
+<p><strong>Export Results</strong></p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="metaboanalyst-pipeline.html#cb52-1" tabindex="-1"></a><span class="co">#Export</span></span>
+<span id="cb52-2"><a href="metaboanalyst-pipeline.html#cb52-2" tabindex="-1"></a><span class="fu">write.csv</span>(sig_df , <span class="fu">paste0</span>(mypath, <span class="st">&quot;output/DE_sig.csv&quot;</span>) , <span class="at">row.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb52-3"><a href="metaboanalyst-pipeline.html#cb52-3" tabindex="-1"></a><span class="fu">write.csv</span>(all_df , <span class="fu">paste0</span>(mypath,<span class="st">&quot;output/DE_all.csv&quot;</span>) , <span class="at">row.names =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## R version 4.4.1 (2024-06-14 ucrt)
+## Platform: x86_64-w64-mingw32/x64
+## Running under: Windows 10 x64 (build 19045)
+## 
+## Matrix products: default
+## 
+## 
+## locale:
+## [1] LC_COLLATE=English_United States.utf8 
+## [2] LC_CTYPE=English_United States.utf8   
+## [3] LC_MONETARY=English_United States.utf8
+## [4] LC_NUMERIC=C                          
+## [5] LC_TIME=English_United States.utf8    
+## 
+## time zone: Africa/Cairo
+## tzcode source: internal
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] memoise_2.0.1        caret_6.0-94         lattice_0.22-6      
+##  [4] pls_2.8-3            Rserve_1.8-13        MetaboAnalystR_3.2.0
+##  [7] cowplot_1.1.3        DT_0.33              openxlsx_4.2.6.1    
+## [10] lubridate_1.9.3      forcats_1.0.0        stringr_1.5.1       
+## [13] purrr_1.0.2          readr_2.1.5          tidyr_1.3.1         
+## [16] ggplot2_3.5.1        tidyverse_2.0.0      dplyr_1.1.4         
+## [19] plyr_1.8.9           tibble_3.2.1        
+## 
+## loaded via a namespace (and not attached):
+##   [1] RColorBrewer_1.1-3   rstudioapi_0.16.0    jsonlite_1.8.8      
+##   [4] magrittr_2.0.3       farver_2.1.2         rmarkdown_2.27      
+##   [7] ragg_1.3.2           vctrs_0.6.5          multtest_2.61.0     
+##  [10] Cairo_1.6-2          htmltools_0.5.8.1    pROC_1.18.5         
+##  [13] sass_0.4.9           parallelly_1.38.0    KernSmooth_2.23-24  
+##  [16] bslib_0.8.0          htmlwidgets_1.6.4    impute_1.79.0       
+##  [19] plotly_4.10.4        cachem_1.1.0         igraph_2.0.3        
+##  [22] lifecycle_1.0.4      iterators_1.0.14     pkgconfig_2.0.3     
+##  [25] Matrix_1.7-0         R6_2.5.1             fastmap_1.2.0       
+##  [28] future_1.33.2        digest_0.6.36        pcaMethods_1.97.0   
+##  [31] colorspace_2.1-1     siggenes_1.79.0      textshaping_0.4.0   
+##  [34] crosstalk_1.2.1      ellipse_0.5.0        RSQLite_2.3.7       
+##  [37] labeling_0.4.3       timechange_0.3.0     httr_1.4.7          
+##  [40] compiler_4.4.1       proxy_0.4-27         bit64_4.0.5         
+##  [43] withr_3.0.0          glasso_1.11          BiocParallel_1.39.0 
+##  [46] DBI_1.2.3            qs_0.26.3            highr_0.11          
+##  [49] gplots_3.1.3.1       MASS_7.3-60.2        lava_1.8.0          
+##  [52] gtools_3.9.5         caTools_1.18.2       ModelMetrics_1.2.2.2
+##  [55] tools_4.4.1          zip_2.3.1            future.apply_1.11.2 
+##  [58] nnet_7.3-19          glue_1.7.0           nlme_3.1-164        
+##  [61] grid_4.4.1           reshape2_1.4.4       fgsea_1.31.0        
+##  [64] generics_0.1.3       recipes_1.1.0        gtable_0.3.5        
+##  [67] tzdb_0.4.0           class_7.3-22         data.table_1.15.4   
+##  [70] RApiSerialize_0.1.3  hms_1.1.3            stringfish_0.16.0   
+##  [73] BiocGenerics_0.52.0  foreach_1.5.2        pillar_1.11.0       
+##  [76] limma_3.61.5         splines_4.4.1        survival_3.6-4      
+##  [79] bit_4.0.5            tidyselect_1.2.1     locfit_1.5-9.10     
+##  [82] knitr_1.48           bookdown_0.40        edgeR_4.3.5         
+##  [85] stats4_4.4.1         xfun_0.46            Biobase_2.64.0      
+##  [88] scrime_1.3.5         statmod_1.5.0        hardhat_1.4.0       
+##  [91] timeDate_4032.109    stringi_1.8.4        lazyeval_0.2.2      
+##  [94] yaml_2.3.10          evaluate_0.24.0      codetools_0.2-20    
+##  [97] crmn_0.0.21          cli_3.6.3            RcppParallel_5.1.8  
+## [100] rpart_4.1.23         systemfonts_1.2.3    munsell_0.5.1       
+## [103] jquerylib_0.1.4      Rcpp_1.0.13          globals_0.16.3      
+## [106] parallel_4.4.1       gower_1.0.1          blob_1.2.4          
+## [109] bitops_1.0-7         listenv_0.9.1        viridisLite_0.4.2   
+## [112] ipred_0.9-15         e1071_1.7-14         scales_1.3.0        
+## [115] prodlim_2024.06.25   rlang_1.1.4          fastmatch_1.1-4</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="dimensionality-reduction-techniques.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="downstream-visualizations.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/Menna-Arafat/CRC_project/2_Metaboanalyst_Downstream_Automated.rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["mybook.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

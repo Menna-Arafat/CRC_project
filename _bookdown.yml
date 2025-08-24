@@ -14,5 +14,4 @@ rmd_files: [
   "5_Automated_WGCNA_main.rmd",
   "6_WGCNA_visualizations.rmd",
   "7_Module_differentiation.rmd"
-  
-]
+  ]

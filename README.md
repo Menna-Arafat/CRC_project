@@ -11,5 +11,5 @@ Please note:
 - The workflow does not include the manual curation step, which involves comparing MS/MS experimental spectra against reference libraries (e.g., HMDB, METLIN, GNPS, MassBank).
 - The dataset provided here is a shuffled version. The original data can only be obtained from the corresponding author.
 
-**Online Version** 
+**Online Version:** 
 You can find the rendered book at (https://github.com/rstudio/bookdown). 

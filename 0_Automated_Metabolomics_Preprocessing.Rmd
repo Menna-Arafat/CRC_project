@@ -293,3 +293,6 @@ output= process_raw_metab(maindir, group_names, mapping_file, cut_off= .6)
 datatable(output, options = list(scrollX=TRUE, scrollY="600px", autoWidth = TRUE))
 ```
 
+```{r, echo=FALSE}
+sessionInfo()
+```

@@ -103,7 +103,7 @@ check_normality <- function(data, output_dir = paste0(mypath, "plots/"), prefix 
 before_norm= check_normality(data, prefix = "before_norm")
 ```
 
-## **MetaboAnalystR object (mSet) Initialization**
+## **MetaboAnalystR Object Initialization**
  - Missing value replacement, Data sanity checks, Automatic normalization
  - Summary plots for metabolite and sample normalization
 ```{r ,warning = FALSE, message = FALSE}
@@ -174,3 +174,6 @@ write.csv(sig_df , paste0(mypath, "output/DE_sig.csv") , row.names = TRUE)
 write.csv(all_df , paste0(mypath,"output/DE_all.csv") , row.names = TRUE)
 ```
 
+```{r, echo=FALSE}
+sessionInfo()
+```

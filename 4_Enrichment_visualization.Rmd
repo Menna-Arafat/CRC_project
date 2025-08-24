@@ -79,5 +79,8 @@ ggsave(paste0(mypath,"plots/enrichment_plot.jpg"), plot1, dpi = 600, width = 7, 
 
 ```
 
+```{r, echo=FALSE}
+sessionInfo()
+```
 
 

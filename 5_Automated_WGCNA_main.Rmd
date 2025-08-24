@@ -5,8 +5,8 @@ WGCNA (for genes) and WMCNA (for metabolites) are network-based methods used to 
 The analysis starts by computing pairwise correlations (typically Pearson) between all features across samples. These correlations are then transformed into a weighted network using a soft-thresholding power, this help remove weak association- which ensures that the resulting network follows a scale-free topology, a common feature of biological systems.  
 From the adjacency matrix, a topological overlap matrix (TOM) is calculated to measure how connected each pair of features is, considering both direct and shared connections. This leads to the identification of modules through hierarchical clustering and dynamic tree cutting, grouping together molecules with similar expression patterns.  
 To relate modules to biological phenotypes, the module eigengenes (the first principal component of each module) are correlated with external traits, typically using Pearson correlation. When the phenotype is binary, it is encoded as 0 and 1. Modules that are significantly correlated with the phenotype of interest are then subjected to functional enrichment analysis to uncover associated pathways and biological functions.  
-Finally, within these relevant modules, hub genes or metabolites—those with high intra-modular connectivity (i.e., high degree centrality)—are identified. These hubs are considered potential biomarker candidates or key regulatory features associated with the condition under study.
-Output Files:  
+Finally, within these relevant modules, hub genes or metabolites—those with high intra-modular connectivity (i.e., high degree centrality)—are identified. These hubs are considered potential biomarker candidates or key regulatory features associated with the condition under study.  
+Output Files:    
 **module_eigengenes.csv**:	Eigengenes (first principal component) for each module; used for trait correlation.  
 **gene_module_assignment.csv**:	Module assignment of each gene/metabolite (e.g., blue, brown, etc.).  
 **modules.csv**:	Lists of features grouped by module. Each column represents a module.  
@@ -257,3 +257,6 @@ res= Run_WGCNA(data, metadata_binary=metadata_binary, power=power, minModuleSize
 
 ```
 
+```{r, echo=FALSE}
+sessionInfo()
+```

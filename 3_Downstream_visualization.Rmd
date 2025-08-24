@@ -245,3 +245,7 @@ for (m in colnames(data.t)) {
 plot_box(data, de[1:3,], group_dist )
 
 ```
+
+```{r, echo=FALSE}
+sessionInfo()
+```
