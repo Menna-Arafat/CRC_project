@@ -6,7 +6,7 @@ bookdown::gitbook:
         <li><a href="./">Network-Based Metabolomics Analysis in R</a></li>
       after: |
         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
-    edit: https://github.com/Menna-Arafat/CRC_project/%s
+    view: https://github.com/Menna-Arafat/CRC_project/blob/master/%s
     download: ["epub"]
 bookdown::epub_book: default
 # bookdown::pdf_book:
