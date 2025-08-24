@@ -1,0 +1,160 @@
+# Dimensionality Reduction Techniques
+> **Description**: This pipeline performs variuos dimensionality reduction techniques: PCA and PLS-DA and sPLS-DA- using Metaboanalyst R package.
+
+
+**Project Initialization**:
+```{r ,warning = FALSE, message = FALSE}
+mypath= "C:/Users/USER/Documents/Github/CRC_project/"
+# Uncomment the following commands
+dir.create("output")
+dir.create("plots")
+dir.create("input")
+```
+
+```{r ,warning = FALSE, message = FALSE}
+#Load libraries
+library(tibble)
+library(plyr)
+library(dplyr)
+library(tidyverse)
+library(openxlsx)
+library(cowplot)
+library(ggplot2)
+library("MetaboAnalystR")
+library(DT)
+#BiocManager::install("DT")
+```
+
+```{r ,warning = FALSE, message = FALSE}
+#load data
+data= read.csv(paste0(mypath,"input/data_for_downstream.csv"))
+data = data |>  column_to_rownames(colnames(data)[1]) 
+
+
+```
+
+## **Input data Preparation for Metaboanalyst**
+```{r ,warning = FALSE, message = FALSE}
+#Specify the group pattern in your samples and add it as the first row in the sheet.
+group_dist= gsub("_.*", "", colnames(data))
+group_levels= unique(group_dist)
+print(group_dist)
+data_formatted= rbind(group_dist, data)
+datatable(data_formatted, options = list(scrollX=TRUE, scrollY="600px", autoWidth = TRUE))
+write.csv(data_formatted, paste0(mypath,"output/for_metaboanalyst.csv"))
+
+```
+
+```{r ,warning = FALSE, message = FALSE}
+# Intiate metaboanalyst object
+mSet<-InitDataObjects("pktable", "stat", FALSE)
+mSet<-Read.TextData(mSet, paste0(mypath,"output/for_metaboanalyst.csv"), "colu", "disc")
+mSet<-SanityCheckData(mSet)
+mSet<-ReplaceMin(mSet)
+mSet<-PreparePrenormData(mSet)
+mSet<-Normalization(mSet, "NULL", "NULL", "AutoNorm", ratio=FALSE)
+
+
+```
+
+## **PCA**  
+   Principal Component Analysis (PCA) is a dimensionality reduction technique used to explore patterns in high-dimensional data. It transforms the original variables into a smaller set of uncorrelated variables called principal components, which capture the maximum variance in the data. PCA is often used for data visualization, outlier detection, and identifying natural clusters or trends without any prior knowledge of group labels and so it is unsupervised!
+```{r ,warning = FALSE, message = FALSE}
+mSet<-PCA.Anal(mSet)
+mSet<-PlotPCA2DScore(mSet, paste0(mypath,"plots/PCA_2D"), "png", 150, width=NA, 1,2,0.95,0,0)
+PCA_data <- mSet$analSet$pca$x
+write.csv(PCA_data, paste0(mypath,"output/pca_score.csv") , row.names = TRUE)
+
+```
+
+**PCA plot**
+```{r ,warning = FALSE, message = FALSE}
+# Load PCA data with samples as row names
+PCA_data <- read.csv(paste0(mypath, "output/pca_score.csv"), row.names = 1)
+
+# Calculate variance explained by each principal component
+vars <- apply(PCA_data, 2, var)
+PC1_var <- round((var(PCA_data$PC1) / sum(vars)) * 100, 1)
+PC2_var <- round((var(PCA_data$PC2) / sum(vars)) * 100, 1)
+PC3_var <- round((var(PCA_data$PC3) / sum(vars)) * 100, 1)
+
+# Add group metadata
+PCA_data$group = group_dist
+group_colors <- c("#fc8d62", "#66c2a5")
+names(group_colors) <- group_levels
+
+pca_plot= ggplot(PCA_data, aes(x = PC1, y = PC2, colour = group)) + 
+      stat_ellipse(aes(fill = group), level = 0.95, geom = "polygon", alpha = 0.1, colour = NA) +
+      geom_point(aes(fill = group), alpha = 0.7, shape = 21, size = 4,
+                 colour = "black", stroke = 1.5) +
+      scale_fill_manual(values = group_colors) +
+      scale_color_manual(values = group_colors) +
+      labs(color = "Groups", fill = "Groups") +
+      xlab(paste0("PC1 (", PC1_var, "%)")) +
+      ylab(paste0("PC2 (", PC2_var, "%)")) +
+      theme(
+            #legend.background = element_rect(size = 0.5, linetype = "solid", colour = "black"),
+            legend.title = element_text(face = "bold", size = 14),
+            legend.position = "right",
+            text = element_text(size = 16, face = "bold")) +
+      theme( plot.background = element_rect(fill = "white", color = NA),
+             panel.background = element_rect(fill = "white", color = NA),
+             panel.grid = element_blank(),
+             axis.line = element_line(color = "black"),
+             axis.ticks = element_line(color = "black"),
+             text = element_text(face = "bold"),
+             plot.title = element_text(hjust = 0.5)) 
+
+print(pca_plot)
+ggsave(paste0(mypath,"plots/PCA_plot.png"), plot = pca_plot, dpi = 600, width = 10, height = 7)
+
+```
+
+## **PLS-DA**  
+   Partial Least Squares Discriminant Analysis (PLS-DA) is a supervised method that combines PLS regression with classification. PLS-DA models the relationship between predictors (e.g., gene or metabolite expression) and a categorical outcome (e.g., disease status), maximizing the covariance between them. And so  It does find directions in the data that best separate predefined groups or classes.
+```{r ,warning = FALSE, message = FALSE}
+library(pls)
+# call adjusted function for VIP plot
+source("C:/Users/USER/Documents/Rscripts/All_Functions/plot_vip.R")
+mSet<-PLSR.Anal(mSet, reg=TRUE)
+
+mSet<-PlotPLSPairSummary(mSet, paste0(mypath, "plots/pls_pair"), "png", 72, width=NA, 5)
+mSet<-PlotPLS2DScore(mSet, paste0(mypath,"plots/pls_score2d"), "png", 72, width=NA, 1,2,0.95,0,0)
+mSet<-PlotPLS3DScoreImg(mSet, paste0(mypath,"plots/pls_score3d"), "png", 72, width=NA, 1,2,3, 40)
+mSet<-PlotPLSLoading(mSet, paste0(mypath,"plots/pls_loading"), "png", 72, width=NA, 1, 2);
+mSet<-PLSDA.CV(mSet, "T",5, "Q2")
+mSet<-PlotPLS.Classification(mSet, paste0(mypath,"plots/pls_cv"), "png", 72, width=NA)
+mSet<-PlotPLS.Imp(mSet, paste0(mypath,"plots/pls_imp"), "png", 72, width=7, "vip", "Comp. 1", 15,  FALSE)
+mSet<-PLSDA.Permut(mSet, 100, "accu")
+mSet<-PlotPLS.Permutation(mSet, paste0(mypath,"plots/pls_perm"), "png", 72, width=NA)
+```
+
+**VIP plot** for displaying top features discriminating the two groups
+```{r ,warning = FALSE, message = FALSE}
+p= Plotvip(mSetObj = mSet,feat.num=15, color.BW =FALSE)
+print(p)
+# Save
+png(paste0(mypath,"plots/vip_plot2.png"), unit = "in",res = 600, width = 7, height = 7)
+Plotvip(mSetObj = mSet,feat.num=15, color.BW =FALSE)
+dev.off()
+
+```
+
+## **splsda**  
+   Sparse PLS-DA (sPLS-DA) extends PLS-DA by introducing variable selection through sparsity constraints. It separates classes while identifying a minimal set of discriminative features.
+```{r ,warning = FALSE, message = FALSE}
+# # Perform sPLS-DA analysis
+# mSet<-SPLSR.Anal(mSet, 1, 1, "same", "Mfold")
+# # Plot sPLS-DA overview
+# mSet<-PlotSPLSPairSummary(mSet, paste0(mypath,"plots/spls_pair"), format = "png", dpi=72, width=NA, 5)
+# # Create 2D sPLS-DA Score Plot
+# mSet<-PlotSPLS2DScore(mSet, paste0(mypath,"plots/spls_score2d"), format = "png", dpi=72, width=NA, 1, 2, 0.95, 1, 0)
+# # Create 3D sPLS-DA Score Plot
+# mSet<-PlotSPLS3DScoreImg(mSet, paste0(mypath,"plots/spls_score3d"), format = "png", 72, width=NA, 1, 2, 3, 40)
+# # Create sPLS-DA loadings plot
+# mSet<-PlotSPLSLoading(mSet, paste0(mypath,"plots/spls_loading"), format = "png", dpi=72, width=NA, 1,"overview")
+# # Perform cross-validation and plot sPLS-DA classification
+# mSet<-PlotSPLSDA.Classification(mSet, paste0(mypath,"plots/spls_cv"), format = "png", dpi=72, width=NA)
+
+```
+

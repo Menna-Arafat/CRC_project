@@ -1,0 +1,176 @@
+# Metaboanalyst Pipeline 
+>  **Description**: This pipeline performs a complete statistical workflow for preprocessing and differential analysis of metabolomics data using MetaboAnalystR package.
+
+**Project Initialization**
+```{r ,warning = FALSE, message = FALSE}
+mypath= "C:/Users/USER/Documents/Github/CRC_project/"
+dir.create("output")
+dir.create("plots")
+dir.create("input")
+
+```
+
+```{r ,warning = FALSE, message = FALSE}
+#Load libraries
+library(tibble)
+library(plyr)
+library(dplyr)
+library(tidyverse)
+library(openxlsx)
+library(cowplot)
+library(ggplot2)
+library("MetaboAnalystR")
+
+#load data
+data= read.csv(paste0(mypath, "input/data_for_downstream.csv")) 
+data = data |>  column_to_rownames(colnames(data)[1]) 
+```
+
+## **Normality Assessment**
+A custom check_normality() function evaluates the distribution of metabolite intensities before and after normalization using: Shapiro-Wilk test on sample means & Density and QQ plots for visual inspection.
+```{r ,warning = FALSE, message = FALSE}
+# check normality of the data
+check_normality <- function(data, output_dir = paste0(mypath, "plots/"), prefix = "before_norm") {
+  if (!dir.exists(output_dir)) dir.create(output_dir, recursive = TRUE)
+  # Convert to numeric
+  data <- mutate_all(data, ~ as.numeric(as.character(.)))
+  # Row-wise means
+  row_means <- apply(data, 1, mean, na.rm = TRUE)
+  # Shapiro-Wilk test
+  shapiro_result <- shapiro.test(row_means)
+  message <- if (shapiro_result$p.value > 0.05) {
+    "Parametric"
+  } else {
+    "Non-parametric"
+  }
+
+    # Density Plot 
+  df_means <- data.frame(value =   row_means )
+  dens_plot <- ggplot(df_means, aes(x = value)) +
+    geom_density(fill = "#69b3a2", alpha = 0.8, color = "black", size = 0.4) +
+    geom_rug(alpha = 0.2) +
+    labs(title = "Density of Metabolites Means", x = "Mean Intensity", y = "Density") +
+    theme_minimal(base_size = 14) +
+    theme(
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.background = element_rect(fill = "white", color = NA),
+      panel.grid = element_blank(),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(color = "black"),
+      text = element_text(face = "bold"),
+      plot.title = element_text(hjust = 0.5)
+    )
+  
+  # QQ-Plot
+  df_means <- data.frame(value = row_means)
+  qq_plot <- ggplot(df_means, aes(sample = value)) + 
+    geom_qq(linewidth = 2.5, alpha = 0.7) + 
+    geom_qq_line(linewidth = 0.7, colour = "red") +
+    labs(title = "QQ Plot of Metabolite Means", x = "Theoretical", y = "Intensity") +
+    theme_minimal(base_size = 14) +
+    theme(
+      plot.background = element_rect(fill = "white", color = NA),
+      panel.background = element_rect(fill = "white", color = NA),
+      panel.grid = element_blank(),
+      axis.line = element_line(color = "black"),
+      axis.ticks = element_line(color = "black"),
+      text = element_text(face = "bold"),
+      plot.title = element_text(hjust = 0.5)
+    )
+  
+  # Combine both plots side by side
+  combined <- plot_grid(dens_plot, qq_plot, labels = c("A", "B"), label_size = 16)
+  
+  # Save combined plot
+  ggsave(filename = paste0(output_dir, paste0("combined_", prefix, ".png")),
+         plot = combined, dpi = 600, width = 14, height = 6, bg = "white")
+  
+  print(message)
+  print(combined)
+  
+  
+  return(list(
+    normality = message,
+    shapiro_p_value = shapiro_result$p.value
+    
+  ))
+}
+
+```
+
+```{r ,warning = FALSE, message = FALSE}
+#Apply the function
+before_norm= check_normality(data, prefix = "before_norm")
+```
+
+## **MetaboAnalystR object (mSet) Initialization**
+ - Missing value replacement, Data sanity checks, Automatic normalization
+ - Summary plots for metabolite and sample normalization
+```{r ,warning = FALSE, message = FALSE}
+# adjust the input format for metaboanalyst
+group_dist= gsub("_.*", "", colnames(data))
+print(group_dist)
+data_formatted= rbind(group_dist, data)
+write.csv(data_formatted, paste0(mypath,"output/for_metaboanalyst.csv"))
+```
+
+## **Auto-scaleing (z-score Normalization)** 
+```{r ,warning = FALSE, message = FALSE}
+#' ## setwd("New folder/")
+mSet<-InitDataObjects("pktable", "stat", FALSE)
+mSet<-Read.TextData(mSet, paste0(mypath,"output/for_metaboanalyst.csv"), "colu", "disc")
+mSet<-SanityCheckData(mSet)
+mSet<-ReplaceMin(mSet)
+mSet<-PreparePrenormData(mSet)
+mSet<-Normalization(mSet, "NULL", "NULL", "AutoNorm", ratio=FALSE)
+mSet<-PlotNormSummary(mSet, paste0(mypath,"plots/metabolites_norm"), "png", 600, width=NA)
+mSet<-PlotSampleNormSummary(mSet, paste0(mypath,"plots/sample_norm"), "png", 600, width=NA)
+
+```
+
+## **Post-Normalization Normality Check**
+```{r ,warning = FALSE, message = FALSE}
+#normality check after normalization
+X <- mSet$dataSet$norm
+after_norm= check_normality(X, prefix = "after_norm")
+```
+
+## **Fold change Analysis**
+```{r ,warning = FALSE, message = FALSE}
+# Fold Change Analysis
+mSet<-FC.Anal(mSet, 2, 0, FALSE) 
+fc <- mSet$analSet$fc
+fc_df = data.frame(FC = fc$fc.all, 
+                logFC = fc$fc.log)
+```
+
+## **Differential Expression Analysis**
+```{r ,warning = FALSE, message = FALSE}
+#Differential expression
+if(after_norm$normality== "Non-parametric"){
+  mSet<-Ttests.Anal(mSet, nonpar = T, 0.05, FALSE, TRUE, "fdr", all_results = TRUE) 
+}else{
+  mSet<-Ttests.Anal(mSet, nonpar = F, 0.05, FALSE, TRUE, "fdr", all_results = TRUE)  
+}
+
+tt.sig= mSet$analSet$tt$sig.mat |>  as.data.frame()
+fc.sig= fc_df[ match( row.names(tt.sig), row.names(fc_df)) , ]
+sig_df= cbind(tt.sig, fc.sig )
+
+tt.all=  data.frame(
+         abs.t.score= mSet[["analSet"]][["tt"]][["t.score"]],
+         p.value=  mSet[["analSet"]][["tt"]][["p.value"]],
+         FDR = p.adjust(mSet[["analSet"]][["tt"]][["p.value"]], method = "BH")  # Benjamini-Hochberg
+)
+fc.all= fc_df[ match( row.names(tt.all), row.names(fc_df)) , ]
+all_df= cbind(tt.all, fc.all )
+print ("DE is Done!")
+```
+
+**Export Results**
+```{r ,warning = FALSE, message = FALSE}
+#Export
+write.csv(sig_df , paste0(mypath, "output/DE_sig.csv") , row.names = TRUE)
+write.csv(all_df , paste0(mypath,"output/DE_all.csv") , row.names = TRUE)
+```
+

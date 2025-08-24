@@ -1,0 +1,411 @@
+# WGCNA Visualizations 
+> **Description**: This pipeline performs all visualizations for the WGCNA pipeline.  
+
+
+**Project Initialization**
+```{r ,warning = FALSE, message = FALSE}
+#Sets the working directory and creates subfolders for organizing outputs.
+mypath= "C:/Users/USER/Documents/Github/CRC_project/"
+dir.create("output")
+dir.create("plots")
+dir.create("input")
+```
+
+```{r ,warning = FALSE, message = FALSE}
+#load packages
+library(gtools)
+library(pROC)
+library(ape)
+library(ggdendro)
+library(WGCNA)
+library(stats)
+library(flashClust)
+library(plyr)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(tibble)
+library(tidyverse)
+library(gridExtra)
+library(gplots)
+library(ggplot2)
+library(circlize)
+library(ComplexHeatmap)
+allowWGCNAThreads()         
+
+
+```
+**Prepare Data**
+```{r ,warning = FALSE, message = FALSE}
+#load data
+dir= paste0(mypath, "output/")
+# expression data
+data= read.csv(paste0(mypath,"input/data_for_downstream.csv")) 
+data = data |>  column_to_rownames(colnames(data)[1]) 
+# differential expression file
+de=   read.csv(paste0(mypath, "output/DE_sig.csv"))
+de=de |> filter(abs(logFC) >= log2(3))
+module_eigengenes= read.csv(paste0(mypath,"output/module_eigengenes.csv")) |>  column_to_rownames("X")
+
+
+group_dist= gsub("_.*", "", colnames(data))
+group_levels= unique(group_dist)
+
+group_colors <- c("#fc8d62", "#66c2a5")
+names(group_colors) <- group_levels
+
+#change type to numeric
+data[]= lapply(data, as.numeric)
+datExpr= t(data) #samples become in row
+#This function checks data for missing entries, entries with weights below a threshold, and zero-variance genes, 
+goods <- goodSamplesGenes(datExpr, verbose = 3)
+datExpr= datExpr[goods$goodSamples== TRUE, goods$goodGenes == TRUE ]
+
+```
+**Prepare Metadata**
+```{r ,warning = FALSE, message = FALSE}
+#metadata
+metadata= data.frame(sample= colnames(data) ,
+                     condition= group_dist,
+                     cond_binary= as.numeric(binarizeCategoricalColumns(group_dist,
+                                                             levelOrder= list(group_levels[2], group_levels[1]))[[1]]))
+
+#metadata= read.csv("input/metadata_test.csv" )
+metadata = metadata |>   column_to_rownames("sample")
+metadata$condition= factor(metadata$condition, levels = group_levels)
+design= model.matrix(~ 0+condition , metadata)
+head(design)
+
+```
+
+**Set parameters and run main WGCNA function**
+```{r ,warning = FALSE, message = FALSE}
+#parameters for WGCNA
+power= 4
+minModuleSize = 20
+metadata_binary= design
+
+#Run WGCNA
+net = blockwiseModules(datExpr, corType = "pearson", maxBlockSize = 5000, 
+                       networkType = "signed", power = power, minModuleSize =minModuleSize,
+                       mergeCutHeight = 0.25, 
+                       numericLabels = F, saveTOMs = TRUE, 
+                       pamRespectsDendro = FALSE, saveTOMFileBase = "TOM")
+
+```
+
+## **Visualizations**  
+### **Module-phenotype Correlation Plot**  
+```{r ,warning = FALSE, message = FALSE}
+
+#Module trait correlation (visualize which module associated with what phenotype)
+#We apply pearson correlation between metadata traits (conditions) and module eigen gene (1st principal component of module genes/metabolites) 
+
+plotheatmap=function(datExpr, design, module_eigengenes){
+traits= design |>  as.data.frame()
+head(traits)
+# Define numbers of genes and samples
+nSamples <- nrow(datExpr)
+nGenes <- ncol(datExpr)
+module.trait.corr <- WGCNA::cor(module_eigengenes, traits, use = 'p')
+module.trait.corr.pvals <- corPvalueStudent(module.trait.corr, nSamples)
+
+#module_trait heatmap of WGCNA package
+# correlations and their p-values
+textMatrix = paste(signif(module.trait.corr, 2), "\n(", signif(module.trait.corr.pvals, 1), ")", 
+                   sep = "")
+dim(textMatrix) = dim(module.trait.corr)
+par(mar = c(6, 6, 4, 6))
+color= colorpanel(250, "#667F9C", "white", "#FE1B1B")
+
+#color= greenWhiteRed(50)
+# Display the correlation values within a heatmap plot
+labeledHeatmap(Matrix = module.trait.corr, xLabels = gsub("condition", "", names(traits)), 
+               yLabels = names(module_eigengenes), 
+               ySymbols = names(module_eigengenes), colorLabels = FALSE, colors = color, 
+               textMatrix = textMatrix, setStdMargins = T, cex.text = 0.8,
+               zlim = c(-1, 1),xColorWidth = 1 * strheight("M"),
+               yColorWidth = 1.5 * strwidth("M"),xColorOffset = strheight("M")/6, 
+               yColorOffset = strwidth("M")/6, font.lab.x = 2, cex.legendLabel = 2,
+               font.lab.y = 2, xLabelsAngle = 75,
+               main = paste("Module-Condition Relationship"), plotLegend= TRUE)
+
+}
+
+#Display
+plotheatmap(datExpr, design, module_eigengenes)
+#Save
+png("plots/heatmap_module_phenotype_cor.png", width = 4000, height = 4500, res= 600) 
+plotheatmap(datExpr, design, module_eigengenes)
+dev.off()
+
+```
+
+### **Samples Dendrogram Plot**
+```{r ,warning = FALSE, message = FALSE}
+#Hierarchical clustering of samples, detect outlier samples,
+#and association of sample with certain trait
+plotDendroAndphenotype= function(data, metadata){
+#Build adjacency matrix for samples
+A = adjacency(data, type = "distance")
+# this calculates the whole network connectivity
+k = as.numeric(apply(A, 2, sum)) - 1
+# standardized connectivity
+Z.k = scale(k)
+# Designate samples as outlying if their Z.k value is below the threshold
+thresholdZ.k = -5  # often -2.5
+# the color vector indicates outlyingness (red)
+outlierColor = ifelse(Z.k < thresholdZ.k, "red", "black")
+# calculate the cluster tree using flahsClust or hclust
+sampleTree = flashClust(as.dist(1 - A), method = "average")
+# Convert traits to a color representation: where red indicates high
+# values
+traitColors = data.frame(numbers2colors(as.numeric(metadata$cond_binary), signed = TRUE))
+#dimnames(traitColors)[[2]] = "Inflammation_lvl"
+datColors = data.frame(outlier_Samples = outlierColor, Condition= traitColors)
+colnames(datColors)[2]= "Conditions"
+
+# Plot the sample dendrogram and the colors underneath.
+WGCNA::plotDendroAndColors(sampleTree, groupLabels = names(datColors), colors = datColors, cex.rowText = 5,  main = "Sample dendrogram and Homogeneity of samples heatmap")
+
+}
+
+# Display
+plotDendroAndphenotype(data,metadata)
+# Save
+png(paste0(mypath,"plots/WGCNA_dendrogram.png"), width = 8000, height = 6000, res= 600)
+plotDendroAndphenotype(data, metadata)
+dev.off()
+
+```
+
+### **Cluster Dendrogram Plot**
+```{r ,warning = FALSE, message = FALSE}
+plotDendro= function(){
+plotDendroAndColors(net$dendrograms[[1]],  net$colors,
+                    paste0("Merged\n", "Modules"),
+                    dendroLabels = FALSE,
+                    addGuide = TRUE,
+                    hang= 0.03,
+                    cex.colorLabels = 0.6,
+                    guideHang = 0.05)
+}
+# Display
+plotDendro()
+# Save
+png(paste0(mypath,"plots/dendrogram_merged_modules.png"), width = 2200, height = 2500, res= 600)
+plotDendro()
+dev.off()
+#for error, Error in .plotOrderedColorSubplot(order = order, colors = colors, rowLabels = rowLabels,  : 
+#Length of colors vector not compatible with number of objects in 'order'.
+#set good samples and good genes
+
+```
+
+### **TOM plot (heatmap of correlated proteins across all modules)**
+```{r ,warning = FALSE, message = FALSE}
+dissTOM= 1 - TOMsimilarityFromExpr(datExpr, power= power) #datExpr samples in rows
+dendro= net$dendrograms[[1]]
+moduleColorsAutomatic= net$colors
+
+plotTOMheatmap = function() {
+  #myheatcol = colorpanel(250,'gold',"orange",'darkred')
+  myheatcol = colorpanel(250,'red',"orange",'lemonchiffon')
+  # Transform dissTOM with a power to enhance visibility
+  TOMplot(dissTOM, dendro, moduleColorsAutomatic,col= myheatcol, 
+          main = "Module Heatmap Plot, All Features")
+}
+# Display
+plotTOMheatmap()
+# save
+png(paste0(mypath,"plots/TOM_PLOT_module_heatmap_all.png"), width = 800, height = 600)
+plotTOMheatmap()
+dev.off()
+
+```
+
+### **MDS plot**
+```{r ,warning = FALSE, message = FALSE}
+
+dissTOM= 1 - TOMsimilarityFromExpr(datExpr, power= 5)
+cmd1=cmdscale(as.dist(dissTOM),2)
+# Display
+plot(cmd1,col=moduleColorsAutomatic,main="MDS plot",
+     xlab="Scaling Dimension 1",ylab="Scaling Dimension 2")
+# Save
+png(paste0(mypath,"plots/MDS_plot.png"),  width = 2800, height = 3300, res= 600) 
+par(mfrow=c(1,1))
+plot(cmd1,col=moduleColorsAutomatic,main="MDS plot",
+     xlab="Scaling Dimension 1",ylab="Scaling Dimension 2")
+dev.off()
+
+
+```
+
+### **TOM plot/ heatmap of modules for selected proteins (based on fold change or DE)**
+```{r ,warning = FALSE, message = FALSE}
+genes= de$X
+# subset data to have only selected proteins
+datExpr_subset= datExpr[,colnames(datExpr) %in% genes]
+dissTOM_subset= 1 - TOMsimilarityFromExpr(datExpr_subset, power= power)
+dendro_subset = hclust(as.dist(dissTOM_subset), method = "average")
+module.gene.assign= net$colors
+moduleColors_subset= module.gene.assign[names(module.gene.assign)%in% genes]
+
+png(paste0(mypath,"plots/module_heatmap_TOM_PLOT_selected.png"), width = 2800, height = 3300, res= 600)
+#myheatcol = colorpanel(250,'gold',"orange",'darkred')
+myheatcol = colorpanel(250,'red',"orange",'lemonchiffon')
+# Transform dissTOM with a power to enhance visibility
+TOMplot(dissTOM_subset, 
+        dendro_subset, 
+        moduleColors_subset,col= myheatcol,
+        main = "Module Heatmap Plot")
+dev.off()
+
+```
+
+### **Chord plot of hubgenes and corresponding modules**
+```{r ,warning = FALSE, message = FALSE}
+module_hubs= read.csv(paste0(mypath,"output/module_hubs.csv")) 
+colnames(module_hubs)=gsub("_hub", "", names(module_hubs) )
+# We can plot only the hub features of significant modules (Module differentiation output)
+module_sig= read.csv(paste0(mypath,"output/ME_differentiation.csv")) 
+m.sig= module_sig$module[module_sig$sig== "***"]
+module_hubs= module_hubs |>  dplyr::select(m.sig)
+
+#build similarity/ design matrix
+keydrivers= unlist(module_hubs) |>  unique() 
+keydrivers= keydrivers[keydrivers != "" & !is.na(keydrivers)]
+mtx= matrix(nrow= ncol(module_hubs), ncol = length( keydrivers)) 
+row.names(mtx)= colnames(module_hubs)
+colnames(mtx)= paste0(keydrivers)
+
+#build similarity matrix 
+#colnames of matrix included in keydrivers specified for certain module/ phenotype(rows) then put in 1
+mod= apply(module_hubs, 2, function(x) as.list(x))
+
+for (i in seq_along(mod)){
+  for (j in 1:ncol(mtx)) {
+    if ( colnames(mtx)[j] %in% mod[[i]] ) {
+      mtx[i, j] <- 1
+    } else {
+      mtx[i, j] <- 0
+    }
+  }
+}
+
+# make shorter row names
+colnames(mtx)=  substr(colnames(mtx), 1, 25) 
+library(circlize)
+
+# Define chord plot function
+plot_chord_hubs <- function() {
+  par(cex = 0.8, mar = c(1, 1, 1, 1))
+  circos.par(
+    gap.degree = 1,
+    track.margin = c(0.05, 0.05),
+    canvas.xlim = c(-1.2, 1.2),
+    canvas.ylim = c(-1.2, 1.2),
+    points.overflow.warning = FALSE
+  )
+  
+  chordDiagram(
+    mtx,
+    annotationTrack = "grid",
+    transparency = 0.5
+  )
+  
+  # Labels customization
+  labels_to_asterisk <- NULL  # Example: c("TP53", "MYC")
+  labels_red <- NULL          # Example: c("BRCA1", "EGFR")
+  
+  circos.track(track.index = 1, panel.fun = function(x, y) {
+    label <- CELL_META$sector.index
+    modified_label <- ifelse(label %in% labels_to_asterisk,
+                             paste0(label, " ***"),
+                             label)
+    label_color <- ifelse(label %in% labels_red, "red", "black")
+    
+    circos.text(
+      CELL_META$xcenter,
+      CELL_META$cell.ylim[2] * 3.5,
+      modified_label,
+      col = label_color,
+      cex = 0.7,
+      font = 2,
+      facing = "clockwise",
+      niceFacing = TRUE,
+      adj = c(0, 0)
+    )
+  }, bg.border = NA)
+  
+  circos.clear()
+}
+
+# Display
+plot_chord_hubs()
+
+# Save
+png(paste0(mypath,"plots/chord_plot_hubs.png"), width = 9000, height = 9000, res = 600)
+plot_chord_hubs()
+dev.off()
+
+```
+
+```{r ,warning = FALSE, message = FALSE}
+# Intramodular analysis: identifying genes with high Gene Significance (GS), i.e., strong association with the phenotype, 
+#and high Module Membership (MM), i.e., strong correlation with the module eigengene (first principal component).
+datKME = signedKME(datExpr, module_eigengenes)
+GS.lvl= read.csv(paste0(mypath,"output/gene.trait.corr.csv")) |>  column_to_rownames("X")
+modules_df= read.csv(paste0(mypath,"output/modules.csv"))
+module.assign= read.csv(paste0(mypath,"output/gene_module_assignment.csv")) |>  deframe() |>  unlist()
+dim(datKME)
+dim(GS.lvl)
+
+
+```
+
+### **Module Membership Vs Gene Significance Scatter plot**
+```{r ,warning = FALSE, message = FALSE}
+# Define plotting function
+plot_MM_vs_GS <- function() {
+  colorOfColumn <- substring(names(datKME), 4)
+  selectModules <- colnames(modules_df)
+  
+  # Set layout: 2 rows, N/2 columns
+  par(mar = c(5, 4, 4, 2) + 0.1)
+  par(mfrow = c(2, ceiling(length(selectModules) / 2)))
+  
+  for (module in selectModules) {
+    if (!(module %in% module.assign)) {
+      message(paste("Skipping module", module, "- not found in module assignment"))
+      next
+    }
+
+    column <- match(module, colorOfColumn)
+    restModule <- moduleColorsAutomatic == module
+
+    if (sum(restModule) > 0) {
+      verboseScatterplot(
+        datKME[restModule, column],
+        GS.lvl[restModule, 1],
+        xlab = paste("Module Membership\n", module, "module"),
+        ylab = "Feature Significance",
+        main = paste("kME:", module, "vs Feature Sig."),
+        col = module
+      )
+    } else {
+      message(paste("No matching entries for module:", module))
+    }
+  }
+}
+
+#Display 
+plot_MM_vs_GS()
+
+#Save
+png(paste0(mypath,"plots/mm_vs_sig.png"), width = 800, height = 700)
+plot_MM_vs_GS()
+dev.off()
+
+```

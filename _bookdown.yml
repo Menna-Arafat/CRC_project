@@ -1,0 +1,18 @@
+delete_merged_file: true
+language:
+  ui:
+    chapter_name: "Section "
+book_filename: "mybook"
+output_dir: "_book"
+rmd_files: [
+  "index.rmd",
+  "0_Automated_Metabolomics_Preprocessing.rmd",
+  "1_Dimensionality_reduction.rmd",
+  "2_Metaboanalyst_Downstream_Automated.rmd",
+  "3_Downstream_visualization.rmd",
+  "4_Enrichment_visualization.rmd",
+  "5_Automated_WGCNA_main.rmd",
+  "6_WGCNA_visualizations.rmd",
+  "7_Module_differentiation.rmd"
+  
+]

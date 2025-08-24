@@ -1,0 +1,83 @@
+# Functional Enrichment 
+> **Description**: This pipeline generates dot plot visualizations for the enriched pathways. The results can be obtained from applying either Metabolite Set Enrichment Analysis (MSEA) or Over-Representation Analysis (ORA) performed on the MetaboAnalyst online platform.
+
+**Project Initialization**:
+```{r ,warning = FALSE, message = FALSE}
+#Sets the working directory and creates subfolders for organizing outputs.
+mypath= "C:/Users/USER/Documents/Github/CRC_project/"
+dir.create("output")
+dir.create("plots")
+dir.create("input")
+
+```
+
+```{r ,warning = FALSE, message = FALSE}
+#Load libraries
+library(tibble)
+library(plyr)
+library(dplyr)
+library(tidyverse)
+library(openxlsx)
+library(cowplot)
+library(ggplot2)
+
+```
+
+```{r ,warning = FALSE, message = FALSE}
+# The enrichment was applied using Metaboanalyst online website
+# load enrichment results
+enrich_table = read.csv(paste0(mypath,"input/enrichment_table.csv"))
+colnames(enrich_table)
+
+
+```
+## **Data Preparation**
+```{r ,warning = FALSE, message = FALSE}
+# add necessary columns for plotting
+#enrich_table$fold_enrichment <-  enrich_table$hits /enrich_table$total
+enrich_table$fold_enrichment <-  enrich_table$Hits /enrich_table$Total.Cmpd
+#enrich_table$fold_enrichment <- round(enrich_table$fold_enrichment,2)
+enrich_table$FDR.log <- -log10(enrich_table$FDR)
+enrich_table$signif <- ifelse(enrich_table$P.adj.FDR.log >= -log10(.05), "sig", "non")
+table( enrich_table$signif) 
+
+# adjust pathway names
+colnames(enrich_table)[1] <- "new_pathway_name"
+enrich_table$new_pathway_name= gsub("%.*", "", enrich_table$new_pathway_name)
+
+# remove duplicated pathways
+enrich_table <- enrich_table[!duplicated(enrich_table$new_pathway_name),]
+# plot only significant pathways
+enrich_table <- enrich_table[enrich_table$signif== "sig",]
+
+
+```
+
+## **Enrichment plot** 
+```{r ,warning = FALSE, message = FALSE}
+plot1 <- ggplot(data=enrich_table, aes( y = reorder(new_pathway_name, FDR.log), 
+                                        x = FDR.log, 
+                                        size = fold_enrichment, 
+                                        color = FDR )) +
+  geom_point() +
+  scale_size_continuous(guide = guide_legend(order = 2), breaks = c( 0.03, 0.07, 0.1, 0.2, 0.3)
+  ) +
+  scale_color_gradient(low = "red", high = "yellow", name = "FDR") +
+  #breaks = c(min(enrich_table$FDR), 0.25,0.50, 0.75, max(enrich_table$FDR)),
+  #labels = c( round(min(enrich_table$FDR),2), 0.25, "0.50", 0.75, round(max(enrich_table$FDR),2))) +  # Customize the color scale 
+  labs(size = "Hits/Total") +
+  xlab("-log10(FDR)") + 
+  ylab("Pathway") +
+  theme_bw() + 
+  theme(legend.position="right", text = element_text(face="bold"),
+        axis.text = element_text(color = "black", face = "bold")) + 
+  theme(axis.text = element_text(color = "black", face = "bold", size = 10))
+ 
+
+print(plot1)
+ggsave(paste0(mypath,"plots/enrichment_plot.jpg"), plot1, dpi = 600, width = 7, height = 7)
+
+```
+
+
+

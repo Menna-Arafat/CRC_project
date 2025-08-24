@@ -1,0 +1,143 @@
+# Module Eigengene Differentiation 
+> **Description**: This pipeline performs post-WGCNA analysis by testing whether module eigengenes significantly differentiate between phenotypic groups.It uses adaptive statistical testing (parametric or non-parametric) based on normality and number of groups to assess eigengene–phenotype associations. And The results are corrected for multiple testing using FDR Benjamini-Hochberg test.
+
+**Project Initialization**
+```{r ,warning = FALSE, message = FALSE}
+#Sets the working directory and creates subfolders for organizing outputs.
+mypath= "C:/Users/USER/Documents/Github/CRC_project/"
+dir.create("output")
+dir.create("plots")
+dir.create("input")
+
+```
+
+```{r ,warning = FALSE, message = FALSE}
+#load packages
+library(plyr)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(tibble)
+library(tidyverse)
+library(gridExtra)
+library(gplots)
+library(ggplot2)
+
+```
+
+```{r ,warning = FALSE, message = FALSE}
+#load data
+module_eigengenes= read.csv(paste0(mypath,"output/module_eigengenes.csv")) %>% column_to_rownames("X") 
+data= read.csv(paste0(mypath,"input/data_for_downstream.csv")) 
+data = data %>% column_to_rownames(colnames(data)[1])
+dir= paste0(mypath, "output/")
+group_dist= gsub("_.*", "", colnames(data))
+group_levels= unique(group_dist)
+
+```
+
+## **Function for Module eigengene differentiation**
+```{r ,warning = FALSE, message = FALSE}
+# A function that apply the appropriate statistical test based on 
+# normality and number of groups to assess differential expression 
+# of module eigengenes (first principal components) between groups.
+test_differentiation <- function(module_eigengenes, group_vector, output_path = NULL) {
+ 
+  check_normality <- function(vector) {
+    x <- as.numeric(vector)
+    x <- x[!is.na(x)]
+    if (length(x) <= 3) {
+      return("Non-parametric")  
+    }
+    result <- tryCatch(shapiro.test(x), error = function(e) return(NULL))
+    if (is.null(result)) return("Non-parametric")
+    if (result$p.value > 0.05) "Parametric" else "Non-parametric"
+  }
+  
+  # Prepare group information
+  group_vector <- as.factor(group_vector)
+  group_levels <- levels(group_vector)
+  n_groups <- length(group_levels)
+  mods <- colnames(module_eigengenes)
+  
+  results_list <- list()
+  
+  for (mod in mods) {
+    x <- module_eigengenes[[mod]]
+    
+    test_type <- check_normality(x)
+    
+    if (n_groups == 2) {
+      if (test_type == "Parametric") {
+        res <- t.test(x ~ group_vector)
+        test_used <- "t-test"
+      } else {
+        res <- wilcox.test(x ~ group_vector)
+        test_used <- "Wilcoxon"
+      }
+      p <- res$p.value
+    } else if (n_groups > 2) {
+      if (test_type == "Parametric") {
+        res <- aov(x ~ group_vector)
+        p <- summary(res)[[1]][["Pr(>F)"]][1]
+        test_used <- "ANOVA"
+      } else {
+        res <- kruskal.test(x ~ group_vector)
+        p <- res$p.value
+        test_used <- "Kruskal-Wallis"
+      }
+    } else {
+      p <- NA
+      test_used <- "Invalid group size"
+    }
+    
+    results_list[[mod]] <- list(p.value = p, test = test_used)
+  }
+  
+  # Convert results to a data frame
+  res_df <- do.call(rbind, lapply(names(results_list), function(mod) {
+    row <- results_list[[mod]]
+    data.frame(modules = mod, p.value = row$p.value, test = row$test)
+  }))
+  
+  # Adjust FDR
+  res_df$fdr <- p.adjust(res_df$p.value, method = "BH")
+  res_df$sig <- ifelse(res_df$fdr <= 0.05, "***", "")
+  res_df$module <- gsub("ME", "", res_df$module)
+  
+  # Save if path is provided
+  if (!is.null(output_path)) {
+    write.csv(res_df,paste0(output_path ,"ME_differentiation.csv") , row.names = FALSE)
+  }
+  
+  return(res_df)
+}
+
+res= test_differentiation(module_eigengenes, group_dist, dir)
+head(res)
+```
+
+## **Horizontal Bar plot**
+```{r ,warning = FALSE, message = FALSE}
+p= ggplot(res) +
+  geom_bar(aes(x = modules, y = -log10(fdr), fill = module), stat = "identity") +
+  coord_flip() + # Flip coordinates to make the bar plot horizontal
+  scale_fill_identity() + # Use actual colors specified in the data frame
+  geom_text(aes(x =  modules  , y =-log10(fdr) , label = sig), 
+            position = position_dodge(width = 0.9), vjust = -0.5, size=.5 ,color = "black") +
+  theme_minimal() + 
+  labs(y = "-log10(FDR)", x = "Modules") +
+  ggtitle("Module Eigengene Differentiation") + # Label axes and provide a title
+  theme(legend.position = "none",
+        plot.title = element_text(hjust = 0.5, size = 12),
+        axis.text = element_text(size=12),
+        axis.title=element_text(size=13) ) + 
+  ylim(0,12) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "black", lwd= 1)
+
+print(p)
+ggsave(paste0(mypath,"plots/module_differentiation.png"), p,width= 10, height = 7, dpi=900 )
+
+
+```
+

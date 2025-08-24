@@ -1,0 +1,295 @@
+# Metabolomic Raw data Processing 
+> **Description**: This R script performs a complete preprocessing pipeline for untargeted metabolomics
+> data. It handles normalization, error correction, missing value imputation, and extraction of
+> group-specific metabolites.  
+>   **Main Steps**:    
+> 0. **Load Data**:  
+>   Loads raw metabolite data from .xlsx files and HMDB annotation file to map IDs to metabolite names.  
+> 1. **Normalization**:  
+>   Applies Probabilistic Quotient Normalization (PQN) to correct for sample variability.  
+> 2. **Error PPM Filtering**:  
+>   Replaces measurements with PPM errors outside the range (-10, 10) with NA.  
+> 3. **Deduplication**:  
+>   Retains only the highest intensity value for duplicated metabolites per sample.  
+> 4. **HMDB mapping**  
+>   Map HMDB ids to Metabolite names using mapping file from Human Metabolome Database (HMDB).    
+> 5. **Filtering**:  
+>   Keeps metabolites present in, at least, 60% of samples per group.  
+> 6. **Get Unique Metabolites**:  
+>   Merges datasets for both groups for downstream analysis and Identifies metabolites unique to each group.  
+> 7. **Imputation**:  
+>   Fills missing values using random noise around the group median. (median +/- 0.01*median)  
+
+**Project Initialization**
+```{r ,warning = FALSE, message = FALSE}
+mypath= "C:/Users/USER/Documents/Github/CRC_project/"
+#setwd(mypath)
+# Uncomment the following commands
+dir.create("output")
+dir.create("plots")
+dir.create("input")
+#Load libraries
+library(tibble)
+library(plyr)
+library(dplyr)
+library(tidyverse)
+library(openxlsx)
+library(DT)
+```
+
+**Set your variables**
+```{r ,warning = FALSE, message = FALSE }
+#Set group distribution
+group_names= c("CRC", "Ctrl")
+maindir= "C:/Users/USER/Documents/Github/CRC_project/"
+mapping_file= read.csv("input/Metabolites-HMDB.csv")
+```
+
+## **Internal Functions**
+```{r }
+#[[0]] load data
+load_raw= function(maindir){
+    raw_list=list()
+    for (i in list.files(paste0(maindir, "input"), pattern = "Gnp") ){
+      raw_list[[i]]= read.xlsx(paste0(maindir,"input/", i))
+    }
+    return(raw_list)
+}
+
+# Internal Functions
+# Normalization and error filtration
+#[[1]]  PQN (Probabilistic Quotient Normalization)
+pqn = function(X, reference = NULL) {
+  X =  mutate_all(X, function(x) as.numeric(as.character(x)))
+  X[X == 0] = NA
+  # If no reference is supplied, use the QC sample (with highest total intensity)
+  if (is.null(reference)) {
+    reference = X[, names(which.max(colSums(X, na.rm = TRUE)))]
+  }
+  # Apply PQN logic: sample / median(sample / reference)
+  # Dividing each sample by the median of feature-wise ratios,
+  X.norm = as.data.frame(apply(X, 2, function(sample) {
+    # old labpqn
+    #scale_factor = median(as.numeric(sample) / median(as.numeric(reference),na.rm = TRUE) , na.rm = TRUE)
+    scale_factor = median(as.numeric(sample) / as.numeric(reference), na.rm = TRUE)
+    sample / scale_factor
+  }))
+  
+  return(X.norm)
+}
+# Normalize intensities and remove intensities for the exceeding error ppm
+normalize= function(raw_list, metabolite_col="Metabolite.name" ){
+  data_norm= list()
+  for(i in seq_along(raw_list)){
+    
+    df= raw_list[[i]]
+    ID_idx= which(grepl(metabolite_col, colnames(df)))
+    assign("ID_idx", ID_idx, envir = .GlobalEnv)
+    sample_idx= which(grepl("Sample", df[1,]) & !grepl("_Sample_", df[1,]))
+    assign("sample_idx", sample_idx, envir = .GlobalEnv)
+    error_idx = which(grepl("ERROR", df[1,]))
+    assign("error_idx", error_idx, envir = .GlobalEnv)
+    df= df[-c(1,2), ] # remove extra rows
+    
+    # Apply PQN to sample intensities
+    df[, sample_idx ]= pqn(df[, sample_idx ] )
+    colnames(df) = gsub("\\s+", ".", colnames(df))
+    colnames(df)= gsub(".*-", "", colnames(df) )
+    data_norm[[i]] = df 
+  }
+  
+  # combine both modes
+  all.data= do.call( rbind, data_norm) 
+  write.csv(all.data, "output/data_normalized.csv", row.names = F)
+  print('Normalization is done')
+  return(all.data)
+ }
+
+#[[2]] Error PPM filteration beyond the range of (-10, 10)
+error_ppm_filter = function(df, error_idx) {
+  
+  for (i in  error_idx) {
+    for (j in 1:nrow(df)) {
+      col_index = i  
+      df[j, col_index] = ifelse(
+        between(as.numeric(df[j, col_index]), -10, 10),
+        as.numeric(df[j, col_index]),
+        NA
+      )
+      
+      if (is.na(df[j, col_index])) {
+        df[j, col_index + 1] = NA
+      }
+    }
+  }
+  return(df)
+}
+
+# [[3]] Deduplication per sample
+#the reason we do so is to keep the highest intensity for the duplicated metabolite for that sample
+sample_deduplicate= function(all.count){
+  colnames(all.count)[1]= "ID"
+  # Initialize the output 
+  df_unduplicated = data.frame(ID= unique(all.count$ID))
+  
+  for (i in 2:ncol(all.count)) {
+    df = all.count[, c(1, i)]
+    sample.name= colnames(all.count)[i]
+    colnames(df) = c("ID", sample.name )
+    # Group by ID and retain the row with the max Value
+    df_undupl = df |> arrange(desc(!!sym(sample.name))) |> distinct(ID, .keep_all = TRUE)
+    # left_join: keeping all rows from the left (first) data frame and adding matching columns from the right (second) data frame.
+    df_unduplicated = left_join(df_unduplicated, df_undupl, by = "ID")
+    # Drop rows where all columns are NA
+    df_unduplicated = df_unduplicated[!apply(is.na(df_unduplicated), 1, all), ]
+  }
+  print("De-Duplication is done")
+  write.csv(df_unduplicated, "output/data_sample_deduplicated.csv", row.names = F)
+  return(df_unduplicated)
+}
+
+#[[4]] Map HMID to metabolites name
+map_id= function(id, mapping_file){
+  mapped_id= mapping_file$Name[match(id, mapping_file$HMDB_ID)] |> as.data.frame()
+  names(mapped_id)= "ID"
+  return(mapped_id)
+}
+# Apply
+# mapped_ids= map_id(df_deduplicated$ID, mapping_file)
+# df_mapped= cbind(mapped_ids, df_deduplicated[,-1])
+# df_mapped= df_mapped[!is.na(df_mapped$ID), ]
+
+# deduplicate similar mapped ids
+deduplicate = function(exp) {
+  exp= as.data.frame(exp)
+  row.names(exp)= NULL
+  colnames(exp)[1]= "ID"
+  
+  # Check for duplicated IDs
+  if (anyDuplicated(exp$ID) > 0) {
+    # Convert all columns (except ID) to numeric
+    exp[,-1] = lapply(exp[,-1], as.numeric)
+    exp = exp %>%
+      dplyr::mutate(mean_expr = rowMeans(dplyr::select(., where(is.numeric)))) %>%
+      arrange(desc(mean_expr))  |> 
+      distinct(ID, .keep_all = TRUE) |> 
+      dplyr::select(-mean_expr)
+  }
+  return(exp)
+}
+
+get_group_dist= function(df, group_names){
+  # list of group distribution
+  group_dist=list()
+  for(i in group_names){
+    group_dist[[i]]= which(grepl(i, colnames(df)))
+  }
+  names(group_dist)= group_names
+  return(group_dist)
+}
+
+
+#[[5]] Filtration of metabolites missing in 50 % of samples per group
+filter_missing = function(df, group_dist, cut_off ){
+
+  result = lapply(group_dist, function(gcols){
+    subdf = df[, c(1,gcols), drop = FALSE]
+    keep  = apply(subdf, 1, function(x) sum(is.na(x)) <= (1 - cut_off) * (ncol(subdf)-1))
+    subdf[keep, ]
+  })
+  # merge 2 datasets
+  df_shared= Reduce(function(x, y) inner_join(x, y, by = "ID"), result)
+  write.csv(df_shared, "output/data_shared_not_imputed.csv", row.names = F)
+  return(df_shared)
+}
+
+#[[6]] get_uniques
+get_uniques= function(df, group_dist ){
+  result = lapply(group_dist, function(gcols){
+    subdf = df[, c(1,gcols), drop = FALSE]
+    all_missings= apply(subdf, 1, function(x) sum(is.na(x)) == length(gcols))
+    subdf[all_missings,]
+  })
+  # Uniques
+  uniques = lapply(seq_along(result), function(i) {
+    current_missing = result[[i]]
+    other_dfs = result[-i]
+    # Combine all IDs from other data frames
+    other_ids = bind_rows(other_dfs) %>% distinct(ID)
+    # Keep only rows that are missing in other groups and not found missing in my current_missing
+    # These are my uniques
+    setdiff(other_ids$ID, current_missing$ID)
+  })
+  
+  group_names= names(group_dist)
+  # combine uniques
+  names(uniques)= group_names
+  uniques_l= stack(uniques)
+  names(uniques_l)= c("ID", "group")
+  unique_df= inner_join(uniques_l, df, by="ID") 
+  write.csv(unique_df, "output/data_uniques.csv", row.names = F)
+  return(unique_df)
+}
+
+#[[7]] Imputation
+impute_me = function(df, group_dist, range = 0.01) {
+  
+  for (name in names(group_dist)) {
+      gcols= group_dist[[name]]
+      na_rows = which(rowSums(is.na(df[, gcols])) > 0)
+      row_meds = apply(df[na_rows, gcols, drop = FALSE], 1, function(m){
+      m = as.numeric(m)
+      med = median(m, na.rm = TRUE)
+      runif(1, min = med - range, max = med + range)
+    })
+    
+    df[na_rows, gcols] = row_meds
+  }
+  
+  write.csv(df, paste0(mypath,"output/data_for_downstream.csv"), row.names = F)
+  write.csv(df, paste0(mypath,"input/data_for_downstream.csv"), row.names = F)
+  return(df)
+}
+```
+
+## **Wrapper Function**
+```{r ,warning = FALSE, message = FALSE }
+# Wrapping function
+process_raw_metab= function(maindir, group_names, mapping_file, cut_off=.6 ){
+  #load data
+  raw_list= load_raw(maindir)
+  # Apply PQN normalization for each mode and filtration
+  all.count= normalize(raw_list)
+  # error ppm filter
+  all.count[, error_idx]= as.data.frame(lapply(all.count[, error_idx], as.numeric) )
+  filtered.data= error_ppm_filter(all.count, error_idx=error_idx)
+  error.filtered= filtered.data[, c(ID_idx, sample_idx)] 
+  # Deduplication per sample
+  df_deduplicated= sample_deduplicate(error.filtered)
+  # ID mapping
+  mapped_ids= map_id(df_deduplicated$ID, mapping_file)
+  df_mapped= cbind(mapped_ids, df_deduplicated[,-1])
+  df_mapped= df_mapped[!is.na(df_mapped$ID), ]
+  # deduplicate similar mapped ids
+  df_mapped_de= deduplicate(df_mapped)
+  # get group distribution
+  group_dist=get_group_dist(df_deduplicated, group_names ) 
+  # filterout metabolites missing in 40% and keep shared
+  df_shared= filter_missing(df_mapped_de, group_dist, cut_off)
+  # get uniques
+  df_uniques= get_uniques(df_mapped_de, group_dist)
+  # impute missings
+  df_imputed= impute_me(df_shared, group_dist)
+  print("All is Done!")
+  return(df_imputed)
+}
+
+
+```
+
+**Apply Main Function**
+```{r ,warning = FALSE, message = FALSE }
+output= process_raw_metab(maindir, group_names, mapping_file, cut_off= .6)
+datatable(output, options = list(scrollX=TRUE, scrollY="600px", autoWidth = TRUE))
+```
+
