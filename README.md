@@ -12,4 +12,4 @@ Please note:
 - The dataset provided here is a shuffled version. The original data can only be obtained from the corresponding author.
 
 **Online Version:** 
-You can find the rendered book at (https://github.com/rstudio/bookdown). 
+You can find the rendered book at (https://bits-and-bites.netlify.app/). 
